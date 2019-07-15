@@ -1,0 +1,14 @@
+<use name="FWCore/MessageLogger"/>
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="DataFormats/TrackReco"/>
+<use name="CommonTools/UtilAlgos"/>
+<use name="GenMatching/"/>
+
+<flags EDM_PLUGIN="1"/>
+
+
+<library file="GenProcessAnalyzer.cc" name="GenProcessAnalyzer">
+  <flags EDM_PLUGIN="1"/>
+</library>
