@@ -23,3 +23,12 @@ This will output the <filename>_step0.root file, which will be used in Step 1.
     cmsRun <filename>_step1_cfg.py
  
 This also outputs the Step 1 ROOT file to the same EOS directory. The Step 1 ROOT file can now be used in the HCAL Trigger analyzer framework: https://github.com/gk199/cms-hcal-debug. Need to list the generated MC files in analyze_run3.py, arguments for run.C, and filepaths for plot_QCD_LLP.py.
+
+# Instructions for Gen Matching
+In afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/L1_TriggerWork/GenMatching/plugins there is GenProcessAnalyzer.cc and BuildFile.xml. Compile with 
+
+    scram b -j 8
+   
+In GenMatching, there is ProcessAnalyzer.py. Edit which MC files in EOS this directs to, and run with
+    
+    cmsRun ProcessAnalyzer.py
