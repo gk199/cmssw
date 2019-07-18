@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-from UserCode.bsmhiggs_fwk.mainNtuplizer_cfi import *
+process = cms.Process("bsmAnalysis")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
@@ -21,10 +21,6 @@ process.load('PhysicsTools.HepMCCandAlgos.genParticles_cfi')
 #------ Declare the correct global tag ------#
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-#process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
-#process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
-#process.GlobalTag.globaltag = '94X_mc2017_realistic_v14'
-#process.GlobalTag.globaltag = '93X_mc2017_realistic_v3'
 process.GlobalTag.globaltag = '106X_upgrade2021_realistic_v4'
 
 process.options   = cms.untracked.PSet(
@@ -34,7 +30,7 @@ process.options   = cms.untracked.PSet(
 
 process.ProcessAnalyzer = cms.EDAnalyzer("GenProcessAnalyzer",
     GenParticleTag = cms.InputTag("genParticles"),
-    verbose = cms.bool(True))
+                                         verbose = cms.bool(False))
 
 process.source = cms.Source("PoolSource",
 #              fileNames = cms.untracked.vstring("file:/afs/cern.ch/work/y/yuanc/Analysis/CMSSW_9_3_15/src/HIG-RunIIFall17wmLHEGS-03808_wtFilter.root"),
