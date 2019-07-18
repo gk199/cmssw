@@ -193,7 +193,7 @@ GenProcessAnalyzer::analyze(const edm::Event& event, const edm::EventSetup& iSet
     if( abs(pdgId)==5 ){ // b quarks - make (good) assumption that any b quark is from the LLP
       genbs.push_back(p4); 
       num_b ++;
-    }
+    } 
   }
 
   sort(genbs.begin(), genbs.end(), ptsort()); // want to sort b-jets by pt, this is what will make TPs

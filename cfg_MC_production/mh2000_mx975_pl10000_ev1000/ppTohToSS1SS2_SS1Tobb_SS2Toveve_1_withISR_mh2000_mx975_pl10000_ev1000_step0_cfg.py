@@ -32,7 +32,8 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("LHESource",
    # dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
+#    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
     #inputCommands = cms.untracked.vstring(
      #   'keep *', 
       #  'drop LHEXMLStringProduct_*_*_*'
