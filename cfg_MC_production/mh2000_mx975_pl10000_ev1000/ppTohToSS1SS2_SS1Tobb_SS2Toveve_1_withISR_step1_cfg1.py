@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root'),
+    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_1.root'),
     inputCommands = cms.untracked.vstring(
         'keep *', 
         'drop *_genParticles_*_*', 
@@ -72,7 +72,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
         dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1.root'),
+    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1_1.root'),
     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )

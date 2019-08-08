@@ -32,12 +32,13 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("LHESource",
    # dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-   #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/LHE/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
+#   fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/LHE/unweighted_events_mh2000_mx975_pl10000_ev100000_3.lhe')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe'),
     #inputCommands = cms.untracked.vstring(
      #   'keep *', 
       #  'drop LHEXMLStringProduct_*_*_*'
    # )
+skipEvents = cms.untracked.uint32(30000)
 )
 
 process.options = cms.untracked.PSet(
@@ -64,7 +65,8 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root'),
+#    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_3.root'),
+    fileName = cms.untracked.string('/afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/cfg_MC_production/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_3.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )

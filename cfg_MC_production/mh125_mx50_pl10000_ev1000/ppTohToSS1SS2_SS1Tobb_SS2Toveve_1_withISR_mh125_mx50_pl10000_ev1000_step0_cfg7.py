@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/Generator/python/ppTohToSS1SS2_SS1Tobb_SS2Toveve.py --filein root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe --fileout /eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root --step GEN,SIM --conditions 106X_upgrade2021_realistic_v4 --no_exec --eventcontent RAWSIM -s GEN,SIM --datatier GEN-SIM --beamspot Run3RoundOptics25ns13TeVHighSigmaZ --mc --era Run3 -n 1000 --python_filename /afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_mh2000_mx975_pl10000_ev1000_step0_cfg.py
+# with command line options: Configuration/Generator/python/ppTohToSS1SS2_SS1Tobb_SS2Toveve.py --filein root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh125_mx50_pl10000_ev100000.lhe --fileout /eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh125_mx50_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root --step GEN,SIM --conditions 106X_upgrade2021_realistic_v4 --no_exec --eventcontent RAWSIM -s GEN,SIM --datatier GEN-SIM --beamspot Run3RoundOptics25ns13TeVHighSigmaZ --mc --era Run3 -n 1000 --python_filename /afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_mh125_mx50_pl10000_ev1000_step0_cfg.py
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -32,12 +32,12 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("LHESource",
    # dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-   #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/LHE/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh2000_mx975_pl10000_ev100000.lhe')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/user/mcitron/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR/unweighted_events_mh125_mx50_pl10000_ev100000.lhe'),
     #inputCommands = cms.untracked.vstring(
      #   'keep *', 
       #  'drop LHEXMLStringProduct_*_*_*'
    # )
+   skipEvents = cms.untracked.uint32(70000)
 )
 
 process.options = cms.untracked.PSet(
@@ -64,7 +64,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root'),
+    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh125_mx50_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_7.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )

@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root'),
+    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_9.root'),
     inputCommands = cms.untracked.vstring(
         'keep *', 
         'drop *_genParticles_*_*', 
@@ -72,7 +72,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
         dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1.root'),
+    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1_9.root'),
     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
@@ -85,6 +85,7 @@ process.mix.bunchspace = cms.int32(25)
 process.mix.minBunch = cms.int32(-12)
 process.mix.maxBunch = cms.int32(3)
 process.mix.input.fileNames = cms.untracked.vstring(['root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/F1F2FB5A-1ADB-464F-AD3F-220E0B8F19B4.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/B9AD8184-3A82-DB47-9C58-D760355B2BAD.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/0F774348-F4D9-0745-B45F-4E62009E85CF.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/9F2162DA-5078-B943-A0E0-9A0C44A62CA9.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/94E67F70-30D3-6B41-BC46-C7F101454E20.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/BFBEEBAD-303B-F248-897F-5BDF4E4F9CAF.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/12A13BC3-AD47-9C44-A4C0-B76D06C99826.root', 'root://cms-xrd-global.cern.ch///store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/4529A24C-B455-0A48-9014-F477FCAF2E29.root'])
+#process.mix.input.fileNames = cms.untracked.vstring(['/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/F1F2FB5A-1ADB-464F-AD3F-220E0B8F19B4.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/B9AD8184-3A82-DB47-9C58-D760355B2BAD.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/0F774348-F4D9-0745-B45F-4E62009E85CF.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/9F2162DA-5078-B943-A0E0-9A0C44A62CA9.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/94E67F70-30D3-6B41-BC46-C7F101454E20.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/BFBEEBAD-303B-F248-897F-5BDF4E4F9CAF.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/12A13BC3-AD47-9C44-A4C0-B76D06C99826.root', '/store/relval/CMSSW_10_6_0_pre4/RelValMinBias_13/GEN-SIM/106X_upgrade2021_realistic_v4-v1/20000/4529A24C-B455-0A48-9014-F477FCAF2E29.root'])
 process.mix.digitizers = cms.PSet(process.theDigitizersValid)
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2021_realistic_v4', '')

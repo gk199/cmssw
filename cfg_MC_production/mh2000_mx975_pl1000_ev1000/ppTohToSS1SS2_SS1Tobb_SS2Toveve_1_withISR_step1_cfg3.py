@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step1 --filein file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root --fileout /eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1.root --pileup_input das:/RelValMinBias_13/CMSSW_10_6_0_pre4-106X_upgrade2021_realistic_v4-v1/GEN-SIM --mc --eventcontent FEVTDEBUGHLT --datatier GEN-SIM-DIGI-RAW --pileup AVE_50_BX_25ns --geometry DB:Extended --conditions 106X_upgrade2021_realistic_v4 --step DIGI:pdigi_valid,L1,DIGI2RAW,HLT:@relval2017 --nThreads 1 --era Run3 --python_filename /afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
+# with command line options: step1 --filein file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl1000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root --fileout /eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl1000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1.root --pileup_input das:/RelValMinBias_13/CMSSW_10_6_0_pre4-106X_upgrade2021_realistic_v4-v1/GEN-SIM --mc --eventcontent FEVTDEBUGHLT --datatier GEN-SIM-DIGI-RAW --pileup AVE_50_BX_25ns --geometry DB:Extended --conditions 106X_upgrade2021_realistic_v4 --step DIGI:pdigi_valid,L1,DIGI2RAW,HLT:@relval2017 --nThreads 1 --era Run3 --python_filename /afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 1000
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -31,7 +31,7 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0.root'),
+    fileNames = cms.untracked.vstring('file:/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl1000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step0_3.root'),
     inputCommands = cms.untracked.vstring(
         'keep *', 
         'drop *_genParticles_*_*', 
@@ -72,7 +72,7 @@ process.FEVTDEBUGHLToutput = cms.OutputModule("PoolOutputModule",
         dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl10000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1.root'),
+    fileName = cms.untracked.string('/eos/cms/store/group/dpg_hcal/comm_hcal/gillian/LLP_Run3/mh2000_mx975_pl1000_ev1000/ppTohToSS1SS2_SS1Tobb_SS2Toveve_1_withISR_step1_3.root'),
     outputCommands = process.FEVTDEBUGHLTEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
