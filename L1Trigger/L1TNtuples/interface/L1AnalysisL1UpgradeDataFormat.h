@@ -107,6 +107,7 @@ namespace L1Analysis
       jetPUDonutEt1.clear();
       jetPUDonutEt2.clear();
       jetPUDonutEt3.clear();
+      jetTowerHoE.clear();
 
       nMuons = 0;
       muonEt.clear();
@@ -191,6 +192,7 @@ namespace L1Analysis
     std::vector<short int> jetPUDonutEt1;
     std::vector<short int> jetPUDonutEt2;
     std::vector<short int> jetPUDonutEt3;
+    std::vector<short int> jetTowerHoE;
 
     unsigned short int nMuons;
     std::vector<float>   muonEt;

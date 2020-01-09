@@ -42,6 +42,7 @@ namespace l1t {
   void setSeedEt(short int et);
   void setPUEt(short int et);
   void setPUDonutEt(unsigned int i, short int et);
+  void setTowerHoE(short int HoE); // H/E as computed in Layer-1
 
   short int towerIEta() const;
   short int towerIPhi() const;
@@ -49,6 +50,7 @@ namespace l1t {
   short int seedEt() const;
   short int puEt() const ;
   short int puDonutEt(int i) const;
+  short int towerHoE() const;
 
   virtual bool operator==(const l1t::Jet& rhs) const;
   virtual inline bool operator!=(const l1t::Jet& rhs) const { return !(operator==(rhs)); };
@@ -63,6 +65,7 @@ namespace l1t {
   short int seedEt_;
   short int puEt_;
   short int puDonutEt_[4];
+  short int towerHoE_;
 
   };
 
