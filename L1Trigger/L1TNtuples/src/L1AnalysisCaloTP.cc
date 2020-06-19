@@ -19,7 +19,7 @@ L1Analysis::L1AnalysisCaloTP::~L1AnalysisCaloTP()
 
 }
 
-void L1Analysis::L1AnalysisCaloTP::SetHCAL( const HcalTrigPrimDigiCollection& hcalTPs ) {
+void L1Analysis::L1AnalysisCaloTP::SetHCAL( const HcalUpgradeTrigPrimDigiCollection& hcalTPs ) {
 
   if (verbose_) edm::LogInfo("L1Ntuple") << "HCAL TPs : " << hcalTPs.size() << std::endl;
 
@@ -40,6 +40,7 @@ void L1Analysis::L1AnalysisCaloTP::SetHCAL( const HcalTrigPrimDigiCollection& hc
     if (hcalScale_!=nullptr) et = hcalScale_->et( compEt, absIeta, sign );
 
     unsigned short fineGrain = (unsigned short) hcalTPs[i].SOI_fineGrain();
+    unsigned short TimingBit = (unsigned short) hcalTPs[i].SOI_timingbit();
 
     tp_.hcalTPieta.push_back( ieta );
     tp_.hcalTPCaliphi.push_back( cal_iphi );
@@ -47,6 +48,7 @@ void L1Analysis::L1AnalysisCaloTP::SetHCAL( const HcalTrigPrimDigiCollection& hc
     tp_.hcalTPet.push_back( et );
     tp_.hcalTPcompEt.push_back( compEt );
     tp_.hcalTPfineGrain.push_back( fineGrain );
+    tp_.hcalTPTimingBit.push_back( TimingBit );
     tp_.nHCALTP++;
 
   }

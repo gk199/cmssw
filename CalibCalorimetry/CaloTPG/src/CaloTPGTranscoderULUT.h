@@ -7,7 +7,7 @@
 #include "CalibFormats/CaloTPG/interface/CaloTPGTranscoder.h"
 #include "Geometry/CaloTopology/interface/HcalTopology.h"
 #include "CondFormats/HcalObjects/interface/HcalLutMetadata.h"
-
+#include "DataFormats/HcalDigi/interface/HcalUpgradeTriggerPrimitiveSample.h"
 
 /** \class CaloTPGTranscoderULUT
   *  
@@ -22,6 +22,8 @@ public:
                         const std::string& decompressionFile="");
   ~CaloTPGTranscoderULUT() override;
   HcalTriggerPrimitiveSample hcalCompress(const HcalTrigTowerDetId& id, unsigned int sample, int fineGrain) const override;
+  HcalUpgradeTriggerPrimitiveSample hcalUpgradeCompress(const HcalTrigTowerDetId& id, unsigned int sample, int fineGrain) const;
+  HcalUpgradeTriggerPrimitiveSample hcalUpgradeCompress(const HcalUpgradeTriggerPrimitiveSample& sample, int timingbit) const;
   EcalTriggerPrimitiveSample ecalCompress(const EcalTrigTowerDetId& id, unsigned int sample, bool fineGrain) const override;
 
   void rctEGammaUncompress(const HcalTrigTowerDetId& hid, const HcalTriggerPrimitiveSample& hc,
@@ -31,7 +33,9 @@ public:
 				   const EcalTrigTowerDetId& eid, const EcalTriggerPrimitiveSample& ec, 
 				   unsigned int& et) const override;
   double hcaletValue(const int& ieta, const int& iphi, const int& version, const int& compressedValue) const override;
+  double hcaletValue(const HcalTrigTowerDetId& hid, const int& compressedValue) const override;
   double hcaletValue(const HcalTrigTowerDetId& hid, const HcalTriggerPrimitiveSample& hc) const override;
+  double hcaletValue(const HcalTrigTowerDetId& hid, const HcalUpgradeTriggerPrimitiveSample& hc) const override; 
   virtual bool HTvalid(const int ieta, const int iphi, const int version) const;
   virtual const std::vector<unsigned int> getCompressionLUT(const HcalTrigTowerDetId& id) const;
   virtual void setup(HcalLutMetadata const&, HcalTrigTowerGeometry const&,
@@ -54,6 +58,8 @@ public:
   static const unsigned int QIE11_OUTPUT_LUT_SIZE = REDUCE11BIT;
   static const unsigned int OUTPUT_LUT_SIZE = std::max({QIE8_OUTPUT_LUT_SIZE, QIE10_OUTPUT_LUT_SIZE, QIE11_OUTPUT_LUT_SIZE});
   static const unsigned int TPGMAX = 256;
+
+  //  bool upgrade_;
 
   // Typedef
   typedef uint8_t LUT;
