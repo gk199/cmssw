@@ -36,6 +36,14 @@ namespace L1Analysis
       hcalTPDepth5.clear();
       hcalTPDepth6.clear();
       hcalTPDepth7.clear();
+      // Hcal ADC info
+      hcalTPADC1.clear();
+      hcalTPADC2.clear();
+      hcalTPADC3.clear();
+      hcalTPADC4.clear();
+      hcalTPADC5.clear();
+      hcalTPADC6.clear();
+      hcalTPADC7.clear();
       // Hcal timing info
       hcalTPtiming1.clear();
       hcalTPtiming2.clear();
@@ -76,6 +84,14 @@ namespace L1Analysis
     std::vector<float> hcalTPDepth5;
     std::vector<float> hcalTPDepth6;
     std::vector<float> hcalTPDepth7;
+    // Hcal ADC 
+    std::vector<float> hcalTPADC1;
+    std::vector<float> hcalTPADC2;
+    std::vector<float> hcalTPADC3;
+    std::vector<float> hcalTPADC4;
+    std::vector<float> hcalTPADC5;
+    std::vector<float> hcalTPADC6;
+    std::vector<float> hcalTPADC7;
     // Hcal timing
     std::vector<double> hcalTPtiming1;
     std::vector<double> hcalTPtiming2;

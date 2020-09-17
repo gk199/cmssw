@@ -189,9 +189,13 @@ L1GenTreeProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  ((parentID > -9999) 
 	   || (abs(id) == 11)
 	   || (abs(id) == 13)
+	   || (abs(id) == 21)
 	   || (abs(id) == 23)
 	   || (abs(id) == 24)
 	   || (abs(id) == 25)
+	   || (abs(id) == 1)
+	   || (abs(id) == 2)
+	   || (abs(id) == 3)
 	   || (abs(id) == 4)
 	   || (abs(id) == 5)
 	   || (abs(id) == 6))
@@ -205,7 +209,14 @@ L1GenTreeProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  l1GenData_->partE.push_back(p.energy());
 	  l1GenData_->partParent.push_back(parentID);
           l1GenData_->partCh.push_back(p.charge());
-          ++nPart;
+	  l1GenData_->partVx.push_back(p.vertex().X());
+          l1GenData_->partVy.push_back(p.vertex().Y());
+          l1GenData_->partVz.push_back(p.vertex().Z());
+          l1GenData_->partPx.push_back(p.px());
+          l1GenData_->partPy.push_back(p.py());
+          l1GenData_->partPz.push_back(p.pz());
+	  l1GenData_->partHardProcess.push_back(p.isHardProcess());
+	  ++nPart;
 	}
     }
     l1GenData_->nPart = nPart;
