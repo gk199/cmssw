@@ -200,7 +200,7 @@ L1GenTreeProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	   || (abs(id) == 5)
 	   || (abs(id) == 6))
 	  )
-	{
+	{     
 	  l1GenData_->partId.push_back(p.pdgId());
 	  l1GenData_->partStat.push_back(p.status());
 	  l1GenData_->partPt.push_back(p.pt());
@@ -217,6 +217,17 @@ L1GenTreeProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
           l1GenData_->partPz.push_back(p.pz());
 	  l1GenData_->partHardProcess.push_back(p.isHardProcess());
 	  ++nPart;
+
+          int nDau {0};
+          for(unsigned int i=0; i<p.numberOfDaughters(); ++i) {
+            l1GenData_->dauId.push_back(dynamic_cast<const reco::GenParticle*>(p.daughter(i))->pdgId());
+            l1GenData_->dauVx.push_back(dynamic_cast<const reco::GenParticle*>(p.daughter(i))->vertex().X());
+            l1GenData_->dauVy.push_back(dynamic_cast<const reco::GenParticle*>(p.daughter(i))->vertex().Y());
+            l1GenData_->dauVz.push_back(dynamic_cast<const reco::GenParticle*>(p.daughter(i))->vertex().Z());
+            ++nDau;
+          }
+          l1GenData_->nDau = nDau;
+
 	}
     }
     l1GenData_->nPart = nPart;

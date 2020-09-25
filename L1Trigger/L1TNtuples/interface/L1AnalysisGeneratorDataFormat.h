@@ -44,6 +44,12 @@ namespace L1Analysis
      partPz.resize(0);
      partHardProcess.resize(0);
 
+     nDau = 0;
+     dauId.resize(0);
+     dauVx.resize(0);
+     dauVy.resize(0);
+     dauVz.resize(0);
+
      nJet = 0;     
      jetPt.resize(0);
      jetEta.resize(0);
@@ -76,6 +82,12 @@ namespace L1Analysis
     std::vector<float> partPy;
     std::vector<float> partPz;
     std::vector<int> partHardProcess;
+
+    int nDau;
+    std::vector<int> dauId;
+    std::vector<float> dauVx;
+    std::vector<float> dauVy;
+    std::vector<float> dauVz;
     
     int nJet;
     std::vector<float> jetPt;
