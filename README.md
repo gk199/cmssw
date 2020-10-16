@@ -1,5 +1,8 @@
 Introduction to CMSSW: http://cms-sw.github.io
 
+## Location on lxplus
+This is saved on `/afs/cern.ch/work/g/gkopp/MC_GenProduction/CMSSW_10_6_0/src`. 
+
 # Directions for making MC files
 Using lhe_to_miniaod_eos.sh, do
 
