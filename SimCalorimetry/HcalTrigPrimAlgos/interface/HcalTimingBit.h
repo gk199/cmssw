@@ -8,12 +8,12 @@
 class HcalTimingBit {
  public:
   
-  HcalTimingBit() {};
+ HcalTimingBit(int version_timing) : version_timing_(version_timing) {};
 
-  std::bitset<4> compute(int ibin, HcalUpgradeTriggerPrimitiveDigi& TPDigi_1, HcalUpgradeTriggerPrimitiveDigi& TPDigi_2, HcalUpgradeTriggerPrimitiveDigi& TPDigi_3, HcalUpgradeTriggerPrimitiveDigi& TPDigi_4) const; //, HcalTrigPrimDigiCollection& Digi_collection) const;
+  std::bitset<4> compute(int ibin, std::vector<HcalUpgradeTriggerPrimitiveDigi> digis) const;
   
  private:
-  
+  int version_timing_;
 };
 
 #endif
