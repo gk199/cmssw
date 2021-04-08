@@ -61,7 +61,7 @@ std::bitset<4> HcalTimingBit::compute(int ibin, std::vector<HcalUpgradeTriggerPr
 	}
     }
     
-    // in HE, neighboring towers in 2x2 may not have same depth. Need to refernce above array for prompt-delayed TDC range
+    // in HE, neighboring towers in 2x2 may not have same depth. Need to reference above array for prompt-delayed TDC range
     if (abs(tp_ieta) > 16) {
       for (int i=0; i<static_cast<int>(energy_depth.size());++i) {
 	int TDCvalue = digi.SOI_rising_avg(i+1);

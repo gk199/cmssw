@@ -734,7 +734,6 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
 void HcalTriggerPrimitiveAlgo::analyze2x2(HcalUpgradeTrigPrimDigiCollection& result) { // HcalUpgradeTrigPrimDigiCollection is a sorted collection of HcalUpgradeTriggerPrimitiveDigi, as defined in DataFormats/HcalDigi/interface/HcalDigiCollections.h
   std::vector<HcalUpgradeTriggerPrimitiveDigi> grouping_2x2[28][36]; // array of 28 in ieta, 36 in iphi. 4 TPs in each 2x2 which are stored in a vector
   for (auto& tp :result) { // loop over the digis contained in result
-  //  for (HcalUpgradeTrigPrimDigiCollection::iterator tp = result.begin(); tp != result.end(); ++tp) {
     HcalTrigTowerDetId id = tp.id(); 
     int tp_ieta_ = id.ieta();
     int tp_iphi_ = id.iphi();
