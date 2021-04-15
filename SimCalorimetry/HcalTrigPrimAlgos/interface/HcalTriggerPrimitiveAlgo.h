@@ -155,6 +155,8 @@ public:
   void analyzeQIE11(IntegerCaloSamples& samples, HcalTriggerPrimitiveDigi& result, const HcalFinegrainBit& fg_algo);
   void analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeTriggerPrimitiveDigi& result, const HcalFinegrainBit& fg_algo);
   void analyze2x2(HcalUpgradeTrigPrimDigiCollection& result);
+  int using2x2 = 1; // 1 = true, 0 = false
+  int version_timing = 1; // 1 = 4 bits for timing, 2 = 3 bits timing + 1 bit of depth
   // Version 0: RCT
   void analyzeHF(IntegerCaloSamples & samples, HcalTriggerPrimitiveDigi & result, const int hf_lumi_shift);
   void analyzeHF(IntegerCaloSamples & samples, HcalUpgradeTriggerPrimitiveDigi & result, const int hf_lumi_shift);
@@ -331,8 +333,6 @@ void HcalTriggerPrimitiveAlgo::run(const HcalTPGCoder* incoder,
    if (override_parameters_.exists("FGVersionHBHE"))
       version = override_parameters_.getParameter<uint32_t>("FGVersionHBHE");
    HcalFinegrainBit fg_algo(version);
-   //   int version_timing = 1; // note, this is taken care of in HcalTriggerPrimitiveAlgo.cc file now
-   //   HcalTimingBit timing(version_timing);
 
    // VME produces additional bits on the front used by lumi but not the
    // trigger, this shift corrects those out by right shifting over them.
@@ -365,8 +365,7 @@ void HcalTriggerPrimitiveAlgo::run(const HcalTPGCoder* incoder,
          }
       }
    }
-   // call analyze2x2 here, just passing result. this then chops up into 2x2s. define 2x2 above (1 line)
-   //   analyze2x2(result);
+   if (using2x2 == 1) analyze2x2(result);
 
    // Free up some memory
    theSumMap.clear();

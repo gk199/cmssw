@@ -677,8 +677,8 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
    }
 
    std::vector<int> finegrain(tpSamples,false);
-   //   const HcalTimingBit ft_algo;
-   //   std::vector<int> timingbit(tpSamples,false); 
+   const HcalTimingBit ft_algo(version_timing);
+   std::vector<int> timingbit(tpSamples,false); 
 
    IntegerCaloSamples output(samples.id(), tpSamples);
    output.setPresamples(tpPresamples);
@@ -723,11 +723,12 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
    outcoder_->compress(output, finegrain, result);
    update(result, theDepthMap[samples.id()], numberOfPresamples_,depth_sums); 
 
-   //   for (int ibin = 0; ibin < tpSamples; ++ibin) {
-   //     timingbit[ibin] = ft_algo.compute(ibin, result).to_ulong();
-   //   }
-   //   outcoder_->compress(timingbit, result);
-
+   if (using2x2 == 0) {
+     for (int ibin = 0; ibin < tpSamples; ++ibin) {
+       timingbit[ibin] = ft_algo.compute(ibin, result).to_ulong();
+     }
+     outcoder_->compress(timingbit, result);
+   }
 }
 
 // define analyze2x2, which takes all TPs, and chops up into 2x2, and calls compute on each one of the 2x2s successively. Then figure out what to do with 4 bits resulting from compute.
@@ -743,15 +744,34 @@ void HcalTriggerPrimitiveAlgo::analyze2x2(HcalUpgradeTrigPrimDigiCollection& res
     double TP_phi_2x2 = tp_iphi_ - 1; // TP_phi_2x2 ranges 0 to 71
     grouping_2x2[static_cast<int>(TP_eta_2x2 / 2)][static_cast<int>(TP_phi_2x2 / 2)].push_back(tp);
   }
-  const HcalTimingBit ft_algo(1); // input version here. 1 = 4 bits of timing, 2 = 3 bits of timing, 1 of depth
+  const HcalTimingBit ft_algo(version_timing); // input version here, defined in .h file. 1 = 4 bits of timing, 2 = 3 bits of timing, 1 of depth
   int tpSamples=numberOfSamples_;
-  std::vector<int> timingbit(tpSamples,false);
-  int ibin = 1; // need to determine what this should be
   for (int ieta_2x2 = 0; ieta_2x2 < 28; ieta_2x2 ++) {
     for (int iphi_2x2 = 0; iphi_2x2 < 36; iphi_2x2 ++) {
-      timingbit[ibin] = ft_algo.compute(ibin, grouping_2x2[ieta_2x2][iphi_2x2]).to_ulong(); // TODO figure out what ibin to use
+      std::vector<bitset<4>> timingbit(tpSamples,false);   
+      std::vector<int> timingbitNW(tpSamples,false);
+      std::vector<int> timingbitNE(tpSamples,false);
+      std::vector<int> timingbitSE(tpSamples,false);
+      std::vector<int> timingbitSW(tpSamples,false);
+
+      for (int ibin = 0; ibin < tpSamples; ++ibin) {
+	timingbit[ibin] = ft_algo.compute(ibin, grouping_2x2[ieta_2x2][iphi_2x2]); // TODO figure out if need to loop over ibin, or what value to set it at if no loop
+	timingbitNW[ibin] = timingbit[ibin][0];
+	timingbitNE[ibin] = timingbit[ibin][1];
+	timingbitSW[ibin] = timingbit[ibin][2];
+	timingbitSE[ibin] = timingbit[ibin][3];
+      }      
+
       // TODO figure out how to "compress" output / bits
-      // timing bit is a vector of ints, need to distribute the result of ft_algo.compute (bitset 4) to one bit per tower. to_ulong() converts 4 bits to a number, probably will need to remove this but allows to compile for now
+      // timing bit is a vector of ints, need to distribute the result of ft_algo.compute (bitset 4) to one bit per tower. 
+      for (int tp = 0; tp < 4; tp ++) {
+	int ieta = grouping_2x2[ieta_2x2][iphi_2x2][tp].id().ieta();
+	int iphi = grouping_2x2[ieta_2x2][iphi_2x2][tp].id().iphi();
+	if (ieta % 2 == 0 && iphi % 2 == 1) outcoder_->compress(timingbitNW, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
+	if (ieta % 2 == 1 && iphi % 2 == 1) outcoder_->compress(timingbitNE, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
+	if (ieta % 2 == 0 && iphi % 2 == 0) outcoder_->compress(timingbitSW, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
+	if (ieta % 2 == 1 && iphi % 2 == 0) outcoder_->compress(timingbitSE, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
+      }
     }
   }
 }
