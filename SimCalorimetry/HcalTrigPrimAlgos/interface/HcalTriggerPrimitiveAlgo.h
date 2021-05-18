@@ -95,7 +95,7 @@ public:
            const HcalTPGCompressor* outcoder,
            const HcalDbService* conditions,
 	   TPColl& result,
-	   //	   HcalTrigPrimDigiCollection& all_result,
+	   //	   HcalTrigPrimDigiCollection& result,
            const HcalTrigTowerGeometry* trigTowerGeometry,
            float rctlsb, const HcalFeatureBit* LongvrsShortCut,
            const Digis&... digis);
@@ -154,9 +154,7 @@ public:
   // 2017 and later: QIE11
   void analyzeQIE11(IntegerCaloSamples& samples, HcalTriggerPrimitiveDigi& result, const HcalFinegrainBit& fg_algo);
   void analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeTriggerPrimitiveDigi& result, const HcalFinegrainBit& fg_algo);
-  void analyze2x2(HcalUpgradeTrigPrimDigiCollection& result);
-  int using2x2 = 1; // 1 = true, 0 = false
-  int version_timing = 1; // 1 = 4 bits for timing, 2 = 3 bits timing + 1 bit of depth
+  int version_LLPflag = 1; // 1 for timing OR depth, 2 for just timing based trigger, 3 for just depth
   // Version 0: RCT
   void analyzeHF(IntegerCaloSamples & samples, HcalTriggerPrimitiveDigi & result, const int hf_lumi_shift);
   void analyzeHF(IntegerCaloSamples & samples, HcalUpgradeTriggerPrimitiveDigi & result, const int hf_lumi_shift);
@@ -303,7 +301,7 @@ void HcalTriggerPrimitiveAlgo::run(const HcalTPGCoder* incoder,
                                    const HcalTPGCompressor* outcoder,
                                    const HcalDbService* conditions,
 				   TPColl& result,
-				   //				   HcalTrigPrimDigiCollection& all_result,
+				   //				   HcalTrigPrimDigiCollection& result,
                                    const HcalTrigTowerGeometry* trigTowerGeometry,
                                    float rctlsb, const HcalFeatureBit* LongvrsShortCut,
                                    const Digis&... digis) {
@@ -365,7 +363,6 @@ void HcalTriggerPrimitiveAlgo::run(const HcalTPGCoder* incoder,
          }
       }
    }
-   if (using2x2 == 1) analyze2x2(result);
 
    // Free up some memory
    theSumMap.clear();

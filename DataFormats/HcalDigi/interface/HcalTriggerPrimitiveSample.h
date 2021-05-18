@@ -18,7 +18,7 @@ public:
   /// get the raw word
   uint16_t raw() const { return theSample; }
   /// get the encoded/compressed Et
-  int compressedEt() const { return theSample & 0xFF; }
+  int compressedEt() const { return theSample & 0xFF; } // 1-8
   /// get fine-grain bit (traditional)
   bool fineGrain(int i = 0) const { return (((theSample) >> (i + 8)) & 0x1) != 0; }
 

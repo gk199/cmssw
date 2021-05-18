@@ -31,8 +31,8 @@ timing(const QIE11DataFrame& frame) {
   if(frame[sig_bx].flavor()==0){
     if(frame[sig_bx].tdc()<50) { rt = 0.5*frame[sig_bx].tdc(); } //ft = frame[sig_bx].flavor(); }
   } else if(frame[sig_bx].flavor()==3) {
-    if(frame[sig_bx].tdc()<50) { rt = 0.5*frame[sig_bx].tdc(); }
-    //    if(frame[sig_bx].tdc()<2) { rt = frame[sig_bx].tdc(); }// ft = frame[sig_bx].flavor(); }
+    //    if(frame[sig_bx].tdc()<50) { rt = frame[sig_bx].tdc(); }
+    if(frame[sig_bx].tdc()<=2) { rt = frame[sig_bx].tdc(); } // ft = frame[sig_bx].flavor(); }
   }
 
 
@@ -677,7 +677,7 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
    }
 
    std::vector<int> finegrain(tpSamples,false);
-   const HcalTimingBit ft_algo(version_timing);
+   const HcalTimingBit ft_algo(version_LLPflag); // version_LLPflag set in .h file. 1 = timing OR depth, 2 = timing, 3 = depth
    std::vector<int> timingbit(tpSamples,false); 
 
    IntegerCaloSamples output(samples.id(), tpSamples);
@@ -723,57 +723,10 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
    outcoder_->compress(output, finegrain, result);
    update(result, theDepthMap[samples.id()], numberOfPresamples_,depth_sums); 
 
-   if (using2x2 == 0) {
-     for (int ibin = 0; ibin < tpSamples; ++ibin) {
-       timingbit[ibin] = ft_algo.compute(ibin, result).to_ulong();
-     }
-     outcoder_->compress(timingbit, result);
+   for (int ibin = 0; ibin < tpSamples; ++ibin) {
+     timingbit[ibin] = ft_algo.compute(ibin, result).to_ulong();
    }
-}
-
-// define analyze2x2, which takes all TPs, and chops up into 2x2, and calls compute on each one of the 2x2s successively. Then figure out what to do with 4 bits resulting from compute.
-void HcalTriggerPrimitiveAlgo::analyze2x2(HcalUpgradeTrigPrimDigiCollection& result) { // HcalUpgradeTrigPrimDigiCollection is a sorted collection of HcalUpgradeTriggerPrimitiveDigi, as defined in DataFormats/HcalDigi/interface/HcalDigiCollections.h
-  std::vector<HcalUpgradeTriggerPrimitiveDigi> grouping_2x2[28][36]; // array of 28 in ieta, 36 in iphi. 4 TPs in each 2x2 which are stored in a vector
-  for (auto& tp :result) { // loop over the digis contained in result
-    HcalTrigTowerDetId id = tp.id(); 
-    int tp_ieta_ = id.ieta();
-    int tp_iphi_ = id.iphi();
-    double TP_eta_2x2 = 1000;
-    if (tp_ieta_ > 0) TP_eta_2x2 = tp_ieta_ + 27; 
-    else if (tp_ieta_ < 0) TP_eta_2x2 = tp_ieta_ + 28; // TP_eta_2x2 ranges 0 to 55 now
-    double TP_phi_2x2 = tp_iphi_ - 1; // TP_phi_2x2 ranges 0 to 71
-    grouping_2x2[static_cast<int>(TP_eta_2x2 / 2)][static_cast<int>(TP_phi_2x2 / 2)].push_back(tp);
-  }
-  const HcalTimingBit ft_algo(version_timing); // input version here, defined in .h file. 1 = 4 bits of timing, 2 = 3 bits of timing, 1 of depth
-  int tpSamples=numberOfSamples_;
-  for (int ieta_2x2 = 0; ieta_2x2 < 28; ieta_2x2 ++) {
-    for (int iphi_2x2 = 0; iphi_2x2 < 36; iphi_2x2 ++) {
-      std::vector<bitset<4>> timingbit(tpSamples,false);   
-      std::vector<int> timingbitNW(tpSamples,false);
-      std::vector<int> timingbitNE(tpSamples,false);
-      std::vector<int> timingbitSE(tpSamples,false);
-      std::vector<int> timingbitSW(tpSamples,false);
-
-      for (int ibin = 0; ibin < tpSamples; ++ibin) {
-	timingbit[ibin] = ft_algo.compute(ibin, grouping_2x2[ieta_2x2][iphi_2x2]); // TODO figure out if need to loop over ibin, or what value to set it at if no loop
-	timingbitNW[ibin] = timingbit[ibin][0];
-	timingbitNE[ibin] = timingbit[ibin][1];
-	timingbitSW[ibin] = timingbit[ibin][2];
-	timingbitSE[ibin] = timingbit[ibin][3];
-      }      
-
-      // TODO figure out how to "compress" output / bits
-      // timing bit is a vector of ints, need to distribute the result of ft_algo.compute (bitset 4) to one bit per tower. 
-      for (int tp = 0; tp < 4; tp ++) {
-	int ieta = grouping_2x2[ieta_2x2][iphi_2x2][tp].id().ieta();
-	int iphi = grouping_2x2[ieta_2x2][iphi_2x2][tp].id().iphi();
-	if (ieta % 2 == 0 && iphi % 2 == 1) outcoder_->compress(timingbitNW, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
-	if (ieta % 2 == 1 && iphi % 2 == 1) outcoder_->compress(timingbitNE, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
-	if (ieta % 2 == 0 && iphi % 2 == 0) outcoder_->compress(timingbitSW, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
-	if (ieta % 2 == 1 && iphi % 2 == 0) outcoder_->compress(timingbitSE, grouping_2x2[ieta_2x2][iphi_2x2][tp]);
-      }
-    }
-  }
+   outcoder_->compress(timingbit, result);
 }
 
 void HcalTriggerPrimitiveAlgo::analyzeHF(IntegerCaloSamples & samples, HcalTriggerPrimitiveDigi & result, const int hf_lumi_shift) {
