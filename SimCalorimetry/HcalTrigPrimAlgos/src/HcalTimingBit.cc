@@ -3,87 +3,78 @@
 
 #include <cassert>
 
-// Two compute methods are defined. One takes 4 digis, and counts delayed cells, along with an option to set a depth bit (1 bit per tower, in 2x2 encoding). One takes 1 digi, and counts delayed cells (3 bits per tower).
+// Compute takes 1 TP digi, and reports if the tower is delayed (has a delayed cell and no prompt cells)
 
-std::bitset<4> HcalTimingBit::compute(int ibin, std::vector<HcalUpgradeTriggerPrimitiveDigi> digis) const
-{
-  int Ndelayed_2x2 = 0;
-
-  // group towers in 2x2 ieta, iphi regions. With 1 bit per tower, this gives a group of 4 bits
-  // 3 of these bits are used for the timing bit (counting number of cells above time and energy values). The 4th bit is used for the depth information
-
-  assert (digis.size() == 4); // check that we have 4 digis in 2x2 grouping
-  for (auto& digi: digis) { // loop over 4 TP digis in grouping
-    HcalTrigTowerDetId id = digi.id();
-    int tp_ieta = id.ieta();
-    //    int tp_iphi = id.iphi();
-
-    // for each TP, determine how many cells are delayed. digi.SOI_rising_avg(i+1) gives the TDC with LUT conversion (defined here https://cmssdt.cern.ch/lxr/source/EventFilter/HcalRawToDigi/plugins/HcalDigiToRawuHTR.cc)
-    std::vector<int> energy_depth = digi.getDepthData();
-    if (abs(tp_ieta) <= 16) {
-      for (int i=1; i<static_cast<int>(energy_depth.size());++i) 
-	{
-	  int TDCvalue = digi.SOI_rising_avg(i+1);
-	  int energy = energy_depth[i];
-	  if ( (TDCvalue == 1 || TDCvalue == 2)  && energy > 50) Ndelayed_2x2 += 1;
-	}
-    }
-    
-    if (abs(tp_ieta) > 16) {
-      for (int i=2; i<static_cast<int>(energy_depth.size());++i) { // start loop at i = 2 to exclude depth 1 HE
-	int TDCvalue = digi.SOI_rising_avg(i+1);
-	int energy = energy_depth[i];
-	if (abs(tp_ieta) <= 20) {
-	  if ( (TDCvalue > tdc_HE[abs(tp_ieta)-1][i]) && energy > 50) Ndelayed_2x2 += 1;
-	}
-	if (abs(tp_ieta) >= 21) {
-	  if ( (TDCvalue > tdc_HE[abs(tp_ieta)-1][i]) && energy > 105) Ndelayed_2x2 += 1;
-	}
-      }
-    }
-  } // closing loop over the digis, have computed number of delayed cells in 2x2 grouping
-
-  if (version_timing_ == 1) {
-    if (Ndelayed_2x2 >= 16) Ndelayed_2x2 = 15; // map 16 delayed cells onto 15 delayed cells to use 4 bits to report
-  }
-  if (version_timing_ == 2) {
-    if (Ndelayed_2x2 >= 8) Ndelayed_2x2 = 7; // map 8-16 delayed cells onto 7 delayed cells to use 3 bits to report
-    int depth_bit = 0;
-    Ndelayed_2x2 += depth_bit * 8; // 4th bit may be used for depth / H/E based trigger
-  }
-
-  return Ndelayed_2x2;
-}
-
-
-
-std::bitset<3> HcalTimingBit::compute(int ibin, HcalUpgradeTriggerPrimitiveDigi& digi) const
+std::bitset<6> HcalTimingBit::compute(int ibin, HcalUpgradeTriggerPrimitiveDigi& digi) const
 {
   int Ndelayed = 0;
+  int NveryDelayed = 0;
+  int Nprompt = 0;
+  const int MinE_ieta20 = 64;
+  const int MinE_ieta21 = 128;
+
+  int DeepEnergy = 0;
+  int EarlyEnergy = 0;
+  const int deepLayerMinE_ieta20 = 80;
+  const int earlyLayerMaxE_ieta20 = 16;
+  const int deepLayerMinE_ieta21 = 160;
+  const int earlyLayerMaxE_ieta21 = 32;
 
   HcalTrigTowerDetId id = digi.id(); 
   int tp_ieta = id.ieta();
-  //  int tp_iphi = id.iphi();
 
+  // for each TP, determine how many cells are delayed. digi.SOI_rising_avg(i+1) gives the TDC with LUT conversion (defined here https://cmssdt.cern.ch/lxr/source/EventFilter/HcalRawToDigi/plugins/HcalDigiToRawuHTR.cc)
   std::vector<int> energy_depth = digi.getDepthData();  
 
   for (int i = 1; i < static_cast<int>(energy_depth.size()); ++i) {
-    int TDCvalue = digi.SOI_rising_avg(i+1);
+    int TDCvalue;
+    if (abs(tp_ieta) > 16) TDCvalue = 2*digi.SOI_rising_avg(i+1); // TDC value in HE (0-50), in half ns steps
+    else TDCvalue = digi.SOI_rising_avg(i+1); // compressed TDC, 0-3 in HB
     int energy = energy_depth[i];
 
+    // timing trigger
+    // in HB, TDC values are compressed (https://github.com/cms-sw/cmssw/commit/43e2e9b3c6e006e86202c488f1fa6db7db5e3a6c#diff-d2373454a91b97bf3479bad0e948f8dcca8e77e449a73565537a17c9460ae08f, https://cmssdt.cern.ch/lxr/source/EventFilter/HcalRawToDigi/plugins/HcalDigiToRawuHTR.cc)
     if (abs(tp_ieta) <= 16) {
-      if ( (TDCvalue == 1 || TDCvalue == 2) && energy > 50) Ndelayed += 1;
+      if ( (TDCvalue == 1) && energy >= MinE_ieta20) Ndelayed += 1;
+      if ( (TDCvalue == 2) && energy >= MinE_ieta20) NveryDelayed += 1;
+      if (TDCvalue == 0 && energy >= MinE_ieta20) Nprompt += 1;
     }
 
+    // in HE, TDC values are uncompressed 
     if (abs(tp_ieta) > 16 && i >= 2) { // in HE exclude depth layer 1 due to backgrounds
       if (abs(tp_ieta) <= 20) {
-	if ( (TDCvalue > tdc_HE[abs(tp_ieta)-1][i]) && energy > 50) Ndelayed += 1;
+	if ( TDCvalue > tdc_HE[abs(tp_ieta)-1][i-1] && TDCvalue <= tdc_HE[abs(tp_ieta)-1][i-1]+2 && energy >= MinE_ieta20) Ndelayed += 1;
+        if ( TDCvalue > tdc_HE[abs(tp_ieta)-1][i-1]+2 && energy >= MinE_ieta20) NveryDelayed += 1;
+        if ( TDCvalue <= tdc_HE[abs(tp_ieta)-1][i-1] && TDCvalue >= 0 && energy >= MinE_ieta20) Nprompt += 1;
       } 
       if (abs(tp_ieta) >= 21) {
-	if ( (TDCvalue > tdc_HE[abs(tp_ieta)-1][i]) && energy > 105) Ndelayed += 1;
+	if ( TDCvalue > tdc_HE[abs(tp_ieta)-1][i-1] && TDCvalue <= tdc_HE[abs(tp_ieta)-1][i-1]+2 && energy >= MinE_ieta21) Ndelayed += 1;
+        if ( TDCvalue > tdc_HE[abs(tp_ieta)-1][i-1]+2 && energy >= MinE_ieta21) NveryDelayed += 1;
+        if ( TDCvalue <= tdc_HE[abs(tp_ieta)-1][i-1] && TDCvalue >= 0 && energy >= MinE_ieta21) Nprompt += 1;
       }
+    }
+
+    // depth trigger
+    if (i <= 2) { // early layers
+      if (abs(tp_ieta) <= 20 && energy > earlyLayerMaxE_ieta20) EarlyEnergy += 1;
+      if (abs(tp_ieta) >= 21 && energy > earlyLayerMaxE_ieta21) EarlyEnergy += 1;
+    }
+    if (i >= 3) { // deep layers
+      if (abs(tp_ieta) <= 20 && energy > deepLayerMinE_ieta20) DeepEnergy += 1;
+      if (abs(tp_ieta) >= 21 && energy > deepLayerMinE_ieta21) DeepEnergy += 1;
     }
   }
 
-  return Ndelayed;
+  int Depth1_Timing5 = 0; // depth 10 10 01 01 veto
+  if (DeepEnergy > 0 && EarlyEnergy == 0) Depth1_Timing5 += 32; // 100000
+  Depth1_Timing5 += std::min(2*Ndelayed, 6); // 000110
+  Depth1_Timing5 += std::min(8*NveryDelayed, 24); // 011000
+  if (Nprompt > 0) Depth1_Timing5 += 1; // 000001
+
+  return Depth1_Timing5;
+
+  //  int TotalDelayed = Ndelayed + NveryDelayed;
+  //  if (version_LLPflag_ == 1) return ((Ndelayed > 0 && Nprompt == 0) || (DeepEnergy > 0 && EarlyEnergy == 0)); // timing OR depth flag
+  //  else if (version_LLPflag_ == 2) return (Ndelayed > 0 && Nprompt == 0); // timing based flag
+  //  else return (DeepEnergy > 0 && EarlyEnergy == 0); // depth based flag (version_LLPflag_ = 3)
 }

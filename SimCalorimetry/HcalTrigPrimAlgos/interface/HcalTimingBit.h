@@ -8,13 +8,12 @@
 class HcalTimingBit {
  public:
   
- HcalTimingBit(int version_timing) : version_timing_(version_timing) {};
+ HcalTimingBit(int version_LLPflag) : version_LLPflag_(version_LLPflag) {};
 
-  std::bitset<4> compute(int ibin, std::vector<HcalUpgradeTriggerPrimitiveDigi> digis) const;
-  std::bitset<3> compute(int ibin, HcalUpgradeTriggerPrimitiveDigi& TPDigi) const;
+  std::bitset<6> compute(int ibin, HcalUpgradeTriggerPrimitiveDigi& TPDigi) const;
   
  private:
-  int version_timing_;
+  int version_LLPflag_;
   // define prompt-delayed TDC range. Note this is offset from depth and ieta by 1
   const int tdc_HE[29][7] = {{8, 14, 15, 17, 0, 0, 0},
                              {8, 14, 15, 17, 0, 0, 0},
