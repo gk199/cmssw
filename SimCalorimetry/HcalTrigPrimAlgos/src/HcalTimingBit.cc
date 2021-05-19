@@ -33,7 +33,7 @@ std::bitset<6> HcalTimingBit::compute(int ibin, HcalUpgradeTriggerPrimitiveDigi&
     int energy = energy_depth[i];
 
     // timing trigger
-    // in HB, TDC values are compressed (https://github.com/cms-sw/cmssw/commit/43e2e9b3c6e006e86202c488f1fa6db7db5e3a6c#diff-d2373454a91b97bf3479bad0e948f8dcca8e77e449a73565537a17c9460ae08f, https://cmssdt.cern.ch/lxr/source/EventFilter/HcalRawToDigi/plugins/HcalDigiToRawuHTR.cc)
+    // in HB, TDC values are compressed
     if (abs(tp_ieta) <= 16) {
       if ( (TDCvalue == 1) && energy >= MinE_ieta20) Ndelayed += 1;
       if ( (TDCvalue == 2) && energy >= MinE_ieta20) NveryDelayed += 1;
@@ -72,9 +72,4 @@ std::bitset<6> HcalTimingBit::compute(int ibin, HcalUpgradeTriggerPrimitiveDigi&
   if (Nprompt > 0) Depth1_Timing5 += 1; // 000001
 
   return Depth1_Timing5;
-
-  //  int TotalDelayed = Ndelayed + NveryDelayed;
-  //  if (version_LLPflag_ == 1) return ((Ndelayed > 0 && Nprompt == 0) || (DeepEnergy > 0 && EarlyEnergy == 0)); // timing OR depth flag
-  //  else if (version_LLPflag_ == 2) return (Ndelayed > 0 && Nprompt == 0); // timing based flag
-  //  else return (DeepEnergy > 0 && EarlyEnergy == 0); // depth based flag (version_LLPflag_ = 3)
 }

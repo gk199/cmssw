@@ -677,7 +677,7 @@ HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples, HcalUpgradeT
    }
 
    std::vector<int> finegrain(tpSamples,false);
-   const HcalTimingBit ft_algo(version_LLPflag); // version_LLPflag set in .h file. 1 = timing OR depth, 2 = timing, 3 = depth
+   const HcalTimingBit ft_algo;
    std::vector<int> timingbit(tpSamples,false); 
 
    IntegerCaloSamples output(samples.id(), tpSamples);
