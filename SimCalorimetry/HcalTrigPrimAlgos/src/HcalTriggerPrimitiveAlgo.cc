@@ -260,6 +260,11 @@ void HcalTriggerPrimitiveAlgo::addSignal(const QIE11DataFrame& frame) {
   std::vector<std::bitset<2>> msb(frame.samples(), 0);
   incoder_->lookupMSB(frame, msb);
 
+  std::vector<double> tdc;
+  for (int i = 0; i < frame.samples(); ++i) { // looping over samples in QIE11 dataframe. frame.samples is 8 TS usually
+    tdc.push_back(frame[i].tdc());
+  }
+
   if (ids.size() == 2) {
     // make a second trigprim for the other one, and share the energy
     IntegerCaloSamples samples2(ids[1], samples1.size());
@@ -273,6 +278,7 @@ void HcalTriggerPrimitiveAlgo::addSignal(const QIE11DataFrame& frame) {
   }
   addSignal(samples1);
   addUpgradeFG(ids[0], detId.depth(), msb);
+  addUpgradeTDCbit(ids[0], detId.depth(), tdc);
 }
 
 void HcalTriggerPrimitiveAlgo::addSignal(const IntegerCaloSamples& samples) {
@@ -395,6 +401,8 @@ void HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples,
   unsigned int shrink = filterSamples - 1;
 
   auto& msb = fgUpgradeMap_[samples.id()];
+  auto& tdc = TDCfgUpgradeMap_[samples.id()];
+
   IntegerCaloSamples sum(samples.id(), samples.size());
 
   std::vector<HcalTrigTowerDetId> ids = theTrigTowerGeometry->towerIds(detId);
@@ -820,6 +828,19 @@ bool HcalTriggerPrimitiveAlgo::needUpgradeID(const HcalTrigTowerDetId& id, int d
   if (aieta >= FIRST_DEPTH7_TOWER and aieta <= LAST_FINEGRAIN_TOWER and depth > LAST_FINEGRAIN_DEPTH)
     return true;
   return false;
+}
+
+void HcalTriggerPrimitiveAlgo::addUpgradeTDCbit(const HcalTrigTowerDetId& id,
+						int depth,
+						const std::vector<double>& bits) {
+  if (validUpgradeFG(id, depth)) {
+    auto it = TDCfgUpgradeMap_.find(id);
+    if (it == TDCfgUpgradeMap_.end()) {
+      TDCFGUpgradeContainer element;
+      element.resize(bits.size());
+      TDCfgUpgradeMap_.insert(std::make_pair(id, element));
+    }
+  }
 }
 
 void HcalTriggerPrimitiveAlgo::addUpgradeFG(const HcalTrigTowerDetId& id,
