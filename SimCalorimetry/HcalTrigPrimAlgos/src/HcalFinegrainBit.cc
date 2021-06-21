@@ -39,3 +39,27 @@ std::bitset<4> HcalFinegrainBit::compute(const HcalFinegrainBit::Tower& tower) c
   }
   return 0;
 }
+
+// A very simple illustrative timing/depth bit computation
+std::bitset<2> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower) const {
+   std::bitset<2> result;
+  int timeflag = 0, depthflag = 0;
+  for(size_t i=0; i<7; i++){
+    if(tower[i].first>50 && tower[i].second>20) // simple algo for timing flag setting
+      timeflag += 1;
+    if(tower[i].first>50) // simple algo for depth flag setting
+      depthflag +=1;
+  }
+
+  if(timeflag>4) 
+    result[0]=true;
+  else 
+    result[0]=false;
+  if(depthflag>0)
+    result[1]=true;
+  else
+    result[1]=false;
+
+  return result;
+}
+

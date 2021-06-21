@@ -270,9 +270,11 @@ void HcalTriggerPrimitiveAlgo::addSignal(const QIE11DataFrame& frame) {
     samples2.setPresamples(frame.presamples());
     addSignal(samples2);
     addUpgradeFG(ids[1], detId.depth(), msb);
+    addUpgradeTDCFG(ids[1], frame);
   }
   addSignal(samples1);
   addUpgradeFG(ids[0], detId.depth(), msb);
+  addUpgradeTDCFG(ids[0], frame);
 }
 
 void HcalTriggerPrimitiveAlgo::addSignal(const IntegerCaloSamples& samples) {
@@ -395,6 +397,8 @@ void HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples,
   unsigned int shrink = filterSamples - 1;
 
   auto& msb = fgUpgradeMap_[samples.id()];
+  auto& timingTDC = fgUpgradeTDCMap_[samples.id()];
+
   IntegerCaloSamples sum(samples.id(), samples.size());
 
   std::vector<HcalTrigTowerDetId> ids = theTrigTowerGeometry->towerIds(detId);
@@ -453,7 +457,7 @@ void HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples,
       output[ibin] = 0;
     }
     // peak-finding is not applied for FG bits
-    finegrain[ibin] = fg_algo.compute(msb[idx]).to_ulong();
+    finegrain[ibin] = fg_algo.compute(msb[idx]).to_ulong() | (fg_algo.compute(timingTDC[idx]).to_ulong() << 4);
   }
   outcoder_->compress(output, finegrain, result);
 }
@@ -855,6 +859,26 @@ void HcalTriggerPrimitiveAlgo::addUpgradeFG(const HcalTrigTowerDetId& id,
     it->second[i][1][depth - 1] = bits[i][1];
   }
 }
+
+
+
+void HcalTriggerPrimitiveAlgo::addUpgradeTDCFG(const HcalTrigTowerDetId& id, const QIE11DataFrame& frame) {
+  HcalDetId detId(frame.id());
+  if (detId.subdet() != HcalEndcap && detId.subdet() != HcalBarrel)
+    return;
+
+  auto it = fgUpgradeTDCMap_.find(id);
+  if (it == fgUpgradeTDCMap_.end()) {
+    FGUpgradeTDCContainer element;
+    element.resize(frame.samples());
+    it = fgUpgradeTDCMap_.insert(std::make_pair(id, element)).first;
+  }
+  for(int i=0; i<frame.samples(); i++) {
+    it->second[i][detId.depth()-1] = std::make_pair(frame[i].adc(), frame[i].tdc());
+  }
+}
+
+
 
 void HcalTriggerPrimitiveAlgo::setWeightsQIE11(const edm::ParameterSet& weightsQIE11) {
   // Names are just abs(ieta) for HBHE
