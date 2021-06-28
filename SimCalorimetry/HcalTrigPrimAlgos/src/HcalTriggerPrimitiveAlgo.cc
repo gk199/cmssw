@@ -868,6 +868,13 @@ void HcalTriggerPrimitiveAlgo::addUpgradeTDCFG(const HcalTrigTowerDetId& id, con
   if (detId.subdet() != HcalEndcap && detId.subdet() != HcalBarrel)
     return;
 
+  std::vector<HcalTrigTowerDetId> ids = theTrigTowerGeometry->towerIds(detId);
+  assert(ids.size() == 1 || ids.size() == 2);
+  IntegerCaloSamples samples1(ids[0], int(frame.samples()));
+  //  IntegerCaloSamples samples1(id, int(frame.samples()));
+  samples1.setPresamples(frame.presamples());
+  incoder_->adc2Linear(frame, samples1); // use linearization LUT
+
   auto it = fgUpgradeTDCMap_.find(id);
   if (it == fgUpgradeTDCMap_.end()) {
     FGUpgradeTDCContainer element;
@@ -875,7 +882,8 @@ void HcalTriggerPrimitiveAlgo::addUpgradeTDCFG(const HcalTrigTowerDetId& id, con
     it = fgUpgradeTDCMap_.insert(std::make_pair(id, element)).first;
   }
   for(int i=0; i<frame.samples(); i++) {
-    it->second[i][detId.depth()-1] = std::make_pair(frame[i].adc(), frame[i].tdc());
+    //    it->second[i][detId.depth()-1] = std::make_pair(frame[i].adc(), frame[i].tdc());
+    it->second[i][detId.depth()-1] = std::make_pair(samples1[i], frame[i].tdc());
   }
 }
 

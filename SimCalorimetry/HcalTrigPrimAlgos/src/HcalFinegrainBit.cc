@@ -64,22 +64,24 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
     int TDC = tower[i].second;
 
     // timing bits
-    if (abs(tp_ieta) <= 16) { // in HB, TDC values are compressed. 01 = first delayed range, 10 = second delayed range
-      if (TDC == 1 && ADC >= MinE_ieta20 ) Ndelayed += 1;
-      if (TDC == 2 && ADC >= MinE_ieta20 ) NveryDelayed +=1;
-      if (TDC == 0 && ADC >= MinE_ieta20 ) Nprompt += 1;
-    }
-    if (abs(tp_ieta) > 16 && i >= 2) { // in HE, TDC values are uncompressed (0-49). Exclude depth 1 in HE due to backgrounds
-      if (abs(tp_ieta) <= 20) {
-	if (TDC > tdc_HE[abs(tp_ieta)-1][i] && TDC <= tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta20) Ndelayed += 1;
-	if (TDC > tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta20) NveryDelayed += 1;
-	if (TDC <= tdc_HE[abs(tp_ieta)-1][i] && TDC >= 0 && ADC >= MinE_ieta20) Nprompt += 1;
+    if (TDC < 50) { // exclude error code for TDC
+      if (abs(tp_ieta) <= 16) { // in HB, TDC values are compressed. 01 = first delayed range, 10 = second delayed range
+	if (TDC == 1 && ADC >= MinE_ieta20 ) Ndelayed += 1;
+	if (TDC == 2 && ADC >= MinE_ieta20 ) NveryDelayed +=1;
+	if (TDC == 0 && ADC >= MinE_ieta20 ) Nprompt += 1;
       }
-      if (abs(tp_ieta) >= 21) {
-        if (TDC > tdc_HE[abs(tp_ieta)-1][i] && TDC <= tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta21) Ndelayed += 1;
-        if (TDC > tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta21) NveryDelayed += 1;
-        if (TDC <= tdc_HE[abs(tp_ieta)-1][i] && TDC >= 0 && ADC >= MinE_ieta21) Nprompt += 1;
-      } 
+      if (abs(tp_ieta) > 16 && i >= 1) { // in HE, TDC values are uncompressed (0-49). Exclude depth 1 in HE due to backgrounds
+	if (abs(tp_ieta) <= 20) {
+	  if (TDC > tdc_HE[abs(tp_ieta)-1][i] && TDC <= tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta20) Ndelayed += 1;
+	  if (TDC > tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta20) NveryDelayed += 1;
+	  if (TDC <= tdc_HE[abs(tp_ieta)-1][i] && TDC >= 0 && ADC >= MinE_ieta20) Nprompt += 1;
+	}
+	if (abs(tp_ieta) >= 21) {
+	  if (TDC > tdc_HE[abs(tp_ieta)-1][i] && TDC <= tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta21) Ndelayed += 1;
+	  if (TDC > tdc_HE[abs(tp_ieta)-1][i]+2 && ADC >= MinE_ieta21) NveryDelayed += 1;
+	  if (TDC <= tdc_HE[abs(tp_ieta)-1][i] && TDC >= 0 && ADC >= MinE_ieta21) Nprompt += 1;
+	} 
+      }
     }
     
     // depth bit
