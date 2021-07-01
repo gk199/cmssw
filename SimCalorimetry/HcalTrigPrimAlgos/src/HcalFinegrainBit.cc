@@ -40,7 +40,7 @@ std::bitset<2> HcalFinegrainBit::compute(const HcalFinegrainBit::Tower& tower) c
 }
 
 // timing/depth bit computation
-std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower, const HcalTrigTowerDetId& id) const {
+std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower, const HcalFinegrainBit::TowerTDC& tower2, const HcalTrigTowerDetId& id) const {
   std::bitset<6> result;
 
   int tp_ieta = id.ieta();
@@ -60,7 +60,9 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
 
   //  int timeflag = 0, depthflag = 0;
   for(size_t i=0; i<7; i++){
-    int ADC = tower[i].first;
+    int ADC_SOI = tower[i].first;
+    int ADC_SOI_1 = tower2[i].first;
+    int ADC = ADC_SOI + ADC_SOI_1;
     int TDC = tower[i].second;
 
     // timing bits
