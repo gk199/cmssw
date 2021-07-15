@@ -147,15 +147,9 @@
     <use name="FWCore/Utilities"/>
   </bin>
 
-  <bin file="TestIntegration.cpp" name="CatchStdExceptiontest">
-    <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Integration/test CatchStdExceptiontest.sh"/>
-    <use name="FWCore/Utilities"/>
-  </bin>
+  <test name="CatchStdExceptiontest" command="CatchStdExceptiontest.sh"/>
 
-  <bin file="TestIntegration.cpp" name="CatchCmsExceptiontest">
-    <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Integration/test CatchCmsExceptiontest.sh"/>
-    <use name="FWCore/Utilities"/>
-  </bin>
+  <test name="CatchCmsExceptiontest" command="CatchCmsExceptiontest.sh"/>
 
   <bin file="TestIntegration.cpp" name="TestIntegrationExistingDictionary">
     <flags TEST_RUNNER_ARGS=" /bin/bash FWCore/Integration/test run_TestExistingDictionary.sh"/>
@@ -350,7 +344,7 @@
     <use name="FWCore/Framework"/>
   </library>
 
-  <library file="DoodadESProducer.cc,Doodad.cc,GadgetRcd.cc" name="DoodadESProducer">
+  <library file="DoodadESProducer.cc,Doodad.cc,GadgetRcd.cc,DoodadEDLooper.cc" name="DoodadESProducer">
     <flags EDM_PLUGIN="1"/>
     <use name="FWCore/Framework"/>
   </library>
@@ -449,4 +443,6 @@
   <test name="TestFWCoreIntegrationPutOrMerge" command="cmsRun ${LOCALTOP}/src/FWCore/Integration/test/putOrMergeTest_cfg.py"/>
 
   <test name="TestFWCoreIntegrationInputSourceAlias" command="cmsRun ${LOCALTOP}//src/FWCore/Integration/test/inputSource_alias_Test_cfg.py"/>
+
+  <test name="TestFWCoreIntegrationEDLooperESProcuer" command="cmsRun ${LOCALTOP}/src/FWCore/Integration/test/testEDLooperESProducer_cfg.py"/>
 </environment>

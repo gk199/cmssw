@@ -8,6 +8,9 @@ from SimG4CMS.Calo.HFDarkeningParams_cff import *
 ## HF shower parameters
 from Geometry.HcalSimData.HFParameters_cff import *
 
+## Modification needed for H2 TestBeam studies
+from Configuration.Eras.Modifier_h2tb_cff import h2tb
+
 ## This object is used to customise g4SimHits for different running scenarios
 
 common_heavy_suppression = cms.PSet(
@@ -27,6 +30,11 @@ common_maximum_time = cms.PSet(
     CriticalDensity         = cms.double(1e-15)  # g/cm3
 )
 
+h2tb.toModify(common_maximum_time,
+    MaxTrackTime = cms.double(1000.0),
+    DeadRegions  = cms.vstring()
+)
+
 common_UsePMT = cms.PSet(
     UseR7600UPMT  = cms.bool(False)
 )
@@ -36,7 +44,7 @@ common_UseHF = cms.PSet(
     Lambda2       = cms.double(700.0),
     Gain          = cms.double(0.33),
     CheckSurvive  = cms.bool(False),
-    FibreR        = cms.untracked.double(0.3)
+    FibreR        = cms.double(0.3)
 )
 
 common_UseLuminosity = cms.PSet(
@@ -625,6 +633,13 @@ from Configuration.Eras.Modifier_phase2_timing_cff import phase2_timing
 phase2_timing.toModify( g4SimHits.ECalSD,
                              StoreLayerTimeSim = cms.untracked.bool(True),
                              TimeSliceUnit = cms.double(0.001) )
+##
+## Change CALO Thresholds
+##
+h2tb.toModify(g4SimHits.CaloSD,
+              EminHits  = cms.vdouble(0.0,0.0,0.0,0.0,0.0),
+              TmaxHits  = cms.vdouble(1000.0,1000.0,1000.0,1000.0,2000.0) )
+
 ##
 ## DD4Hep migration
 ##
