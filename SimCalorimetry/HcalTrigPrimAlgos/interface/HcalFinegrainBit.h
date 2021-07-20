@@ -16,7 +16,7 @@ public:
   HcalFinegrainBit(int version) : version_(version){};
 
   std::bitset<2> compute(const Tower&) const;
-  std::bitset<6> compute(const TowerTDC&, const TowerTDC&, const HcalTrigTowerDetId&) const;
+  std::bitset<6> compute(const TowerTDC&, const HcalTrigTowerDetId&) const;
 
 private:
   // define the two bits in the tower
