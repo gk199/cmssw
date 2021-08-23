@@ -134,6 +134,7 @@ namespace l1t {
             uint32_t towerDatum = ctp7Data.getET(cType, negativeEta, iEta, iPhi);
             if (ctp7Data.getFB(cType, negativeEta, iEta, iPhi) != 0)
               towerDatum |= 0x0100;
+	    std::cout << "in CaloLayer1Unpacker, towerDatum & 0x0100 = " << (towerDatum & 0x0100) << std::endl;
             if (ctp7Data.isLinkMisaligned(cType, negativeEta, iEta, iPhi))
               towerDatum |= 0x0200;
             if (ctp7Data.isLinkInError(cType, negativeEta, iEta, iPhi))

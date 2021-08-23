@@ -56,6 +56,7 @@ namespace l1t {
             // First calo tower is in the LSW with phi
             tower1.setHwPt(raw_data & 0x1FF);
             tower1.setHwQual((raw_data >> 12) & 0xF);
+	    std::cout << ((raw_data >> 12) & 0xF) << " = tower1.setHwQual((raw_data >> 12) & 0xF) in CaloTowerUnpacker.cc" << std::endl;
             tower1.setHwEtRatio((raw_data >> 9) & 0x7);
             tower1.setHwPhi(link_phi + 1);  // iPhi starts at 1
 
@@ -77,6 +78,7 @@ namespace l1t {
 
             tower2.setHwPt((raw_data >> 16) & 0x1FF);
             tower2.setHwQual((raw_data >> 28) & 0xF);
+	    std::cout << ((raw_data >> 28) & 0xF) << " = tower2.setHwQual((raw_data >> 28) & 0xF) in CaloTowerUnpacker.cc" << std::endl;
             tower2.setHwEtRatio((raw_data >> 25) & 0x7);
             tower2.setHwPhi(link_phi + 2);
 

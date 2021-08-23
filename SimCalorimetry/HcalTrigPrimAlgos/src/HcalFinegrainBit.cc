@@ -1,6 +1,7 @@
 #include "SimCalorimetry/HcalTrigPrimAlgos/interface/HcalFinegrainBit.h"
 
 #include <cassert>
+#include <iostream>
 
 std::bitset<2> HcalFinegrainBit::compute(const HcalFinegrainBit::Tower& tower) const {
   if (version_ == 0) {
@@ -107,6 +108,43 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
   else
     result[5] = false;
   result[1] = result[2] = false;  // 000110 in HcalTriggerPrimitiveAlgo.cc, set to MIP bits from above
+
+  if (id.ieta() == 1 && id.iphi() == 1) {
+    result[0] = 1;
+    result[3] = result[4] = result[5] = 0;
+  } 
+  if (id.ieta() == 3 &&id.iphi() == 1) {
+    result[3] = 1;
+    result[0] = result[4] = result[5] = 0;
+  }
+  if (id.ieta() == 5 &&id.iphi() == 1) {
+    result[4] = 1;
+    result[3] = result[0] = result[5] = 0;
+  }
+  if (id.ieta() == 7 &&id.iphi() == 1) {
+    result[5] = 1;
+    result[3] = result[4] = result[0] = 0;
+  }
+  if (id.ieta() == 9 && id.iphi() == 1) {
+    result[3] = result[4] = 1;
+    result[5] = result[0] = 0;
+  }
+  if (id.ieta() == 11 && id.iphi() == 1) {
+    result[3] = result[5] = 1;
+    result[4] = result[0] = 0;
+  }
+  if (id.ieta() == 13 && id.iphi() == 1) {
+    result[3] = result[4] = result[5] = 1;
+    result[0] = 0;
+  }
+  if (id.ieta() == 15 && id.iphi() == 1) {
+    result [0] = result [3] = result [4] = result[5] = 1;
+  }
+  /*
+  if (id.ieta() > 10) result[0] = result[3] = result[4] = result[5] = 0;
+  if (id.ieta() < 11) result[0] = result[3] = result[4] = result[5] = 1;
+  */
+  //  if ((result[0] == 1) | (result[1] == 1) | (result[2] == 1) | (result[3] == 1) | (result[4] == 1) | (result[5] == 1)) std::cout << result[0] << " = depth flagged; " << result[1] << ", " << result[2] << " = MIP bits; " << result[3] << " = prompt; " << result[4] << ", " << result[5] << " = slightly delayed, very delayed for ieta, iphi = " << id.ieta() << ", " << id.iphi() << std::endl;
 
   return result;
 }

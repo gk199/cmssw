@@ -27,7 +27,7 @@ hcalSimBlock = cms.PSet(
     HEDarkening = cms.bool(False),
     HFDarkening = cms.bool(False),
     minFCToDelay=cms.double(5.), # old TC model! set to 5 for the new one
-    debugCaloSamples=cms.bool(False),
+    debugCaloSamples=cms.bool(True), #False),
     ignoreGeantTime=cms.bool(False),
     # settings for SimHit test injection
     injectTestHits = cms.bool(False),

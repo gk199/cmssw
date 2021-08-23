@@ -102,6 +102,7 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
           const CaloTower& tow = CaloTools::getTower(towers, CaloTools::caloEta(ieta), iphi);
 
           int seedEt = tow.hwPt();
+          int iDelay = tow.hwQual();
           int iEt = seedEt;
           bool satSeed = false;
           bool vetoCandidate = false;
@@ -117,6 +118,7 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
           for (int deta = -4; deta < 5; ++deta) {
             for (int dphi = -4; dphi < 5; ++dphi) {
               int towEt = 0;
+              int towDelay = 0;
               int ietaTest = ieta + deta;
               int iphiTest = iphi + dphi;
 
@@ -135,6 +137,8 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
               // check jet mask and sum tower et
               const CaloTower& towTest = CaloTools::getTower(towers, CaloTools::caloEta(ietaTest), iphiTest);
               towEt = towTest.hwPt();
+              towDelay = towTest.hwQual();
+	      //	      if (towDelay != 0) std::cout<< "in Stage2Layer2JetAlgorithmFirmwareImp towDelay from hwQual = " << towDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
 
               if (mask_[8 - (dphi + 4)][deta + 4] == 0)
                 continue;
@@ -145,12 +149,15 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
 
               if (vetoCandidate)
                 break;
-              else
+              else {
                 iEt += towEt;
+                iDelay += towDelay;
+	      }
             }
             if (vetoCandidate)
               break;
           }
+	  //	  if (iDelay != 0) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
 
           // add the jet to the list
           if (!vetoCandidate) {
@@ -239,6 +246,8 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
               iEt = CaloTools::kSatJet;
 
             jet.setHwPt(iEt);
+            jet.setHwQual(iDelay);
+	    std::cout << "Stage2Layer2JetAlgorithmFirmwareImp1 jet.setHwQual(iDelay) = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
             jet.setRawEt((short int)rawEt);
             jet.setSeedEt((short int)seedEt);
             jet.setTowerIEta((short int)caloEta);

@@ -214,6 +214,10 @@ void L1TStage2Layer1Producer::produce(edm::Event& iEvent, const edm::EventSetup&
 
       int ietIn = hcalItr->SOI_compressedEt();
       int ifg = hcalItr->SOI_fineGrain();
+      int fg_bits = 0;
+      for (int index = 0; index < 6; index++) fg_bits += hcalItr->SOI_fineGrain(index) << index;
+
+      std::cout << "in L1TStage2Layer1Producer.cc, ifg = " << ifg << " and full 6 bits are = " << fg_bits << std::endl;
 
       // decompress
       double et = 0.;
