@@ -102,7 +102,8 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
           const CaloTower& tow = CaloTools::getTower(towers, CaloTools::caloEta(ieta), iphi);
 
           int seedEt = tow.hwPt();
-          int iDelay = tow.hwQual();
+          int iDelay = (tow.hwQual() & 0b0100) >> 2;
+	  if ((iDelay > 0) && (abs(ieta) < 29)) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay from hwQual = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
           int iEt = seedEt;
           bool satSeed = false;
           bool vetoCandidate = false;
@@ -137,8 +138,8 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
               // check jet mask and sum tower et
               const CaloTower& towTest = CaloTools::getTower(towers, CaloTools::caloEta(ietaTest), iphiTest);
               towEt = towTest.hwPt();
-              towDelay = towTest.hwQual();
-	      //	      if (towDelay != 0) std::cout<< "in Stage2Layer2JetAlgorithmFirmwareImp towDelay from hwQual = " << towDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
+              towDelay = (towTest.hwQual() & 0b0100) >> 2;
+	      //	      if ((towDelay > 0) && (abs(ietaTest) < 29)) std::cout<< "in Stage2Layer2JetAlgorithmFirmwareImp towDelay from hwQual = " << towDelay << " at ieta, iphi = " << ietaTest << ", " << iphiTest << std::endl;
 
               if (mask_[8 - (dphi + 4)][deta + 4] == 0)
                 continue;
@@ -246,8 +247,8 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
               iEt = CaloTools::kSatJet;
 
             jet.setHwPt(iEt);
-            jet.setHwQual(iDelay);
-	    std::cout << "Stage2Layer2JetAlgorithmFirmwareImp1 jet.setHwQual(iDelay) = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
+            if (iDelay >= 2) jet.setHwQual(1);
+	    if (iDelay >= 2) std::cout << "Stage2Layer2JetAlgorithmFirmwareImp1 jet.setHwQual(1) = since iDelay = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
             jet.setRawEt((short int)rawEt);
             jet.setSeedEt((short int)seedEt);
             jet.setTowerIEta((short int)caloEta);

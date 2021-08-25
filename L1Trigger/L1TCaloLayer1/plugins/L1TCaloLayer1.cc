@@ -164,6 +164,7 @@ void L1TCaloLayer1::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   iEvent.getByToken(ecalTPSource, ecalTPs);
   edm::Handle<HcalTrigPrimDigiCollection> hcalTPs;
   iEvent.getByToken(hcalTPSource, hcalTPs);
+  std::cout << "in L1TCaloLayer1.cc, got Hcal TP Digi collection" << std::endl;
 
   CaloTowerBxCollection towersColl;
   L1CaloRegionCollection rgnCollection;
@@ -202,23 +203,34 @@ void L1TCaloLayer1::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
       // Prevent usage of HF TPs with Layer-1 emulator if HCAL TPs are old style
       else if (hcalTp.id().version() == 0 && absCaloEta > 29) {
         continue;
-      } else if (absCaloEta <= 41) {
+      } 
+      else if (absCaloEta <= 41) {
         int caloPhi = hcalTp.id().iphi();
         int et = hcalTp.SOI_compressedEt();
-        bool fg = hcalTp.t0().fineGrain(0);
-        bool fg2 = hcalTp.t0().fineGrain(1);
-        if (caloPhi <= 72) {
+        bool fg = hcalTp.t0().fineGrain(0);  // depth
+        bool fg2 = hcalTp.t0().fineGrain(1); // MIP
+        bool fg3 = hcalTp.t0().fineGrain(2); // MIP
+        bool fg4 = hcalTp.t0().fineGrain(3); // prompt
+        bool fg5 = hcalTp.t0().fineGrain(4); // delay 1
+        bool fg6 = hcalTp.t0().fineGrain(5); // delay 2
+	if (caloPhi <= 72) {
           UCTTowerIndex t = UCTTowerIndex(caloEta, caloPhi);
           uint32_t featureBits = 0;
-          if (fg)
-            featureBits |= 0b01;
-          // fg2 should only be set for HF
-          if (absCaloEta > 29 && fg2)
-            featureBits |= 0b10;
-          if (!layer1->setHCALData(t, featureBits, et)) {
-            LOG_ERROR << "caloEta = " << caloEta << "; caloPhi =" << caloPhi << std::endl;
-            LOG_ERROR << "UCT: Failed loading an HCAL tower" << std::endl;
-            return;
+	  if (absCaloEta > 29) {
+	    if (fg)
+	      featureBits |= 0b01;
+	    // fg2 should only be set for HF
+	    if (absCaloEta > 29 && fg2)
+	      featureBits |= 0b10;
+	  }
+	  if (absCaloEta <= 29) {
+	    featureBits |= (fg | ((!fg4) & (fg5 | fg6))); // depth | (!prompt & (delay1 | delay2))
+	    //	    if ((fg == 1) | (fg4 == 1) | (fg5 == 1) | (fg6 == 1)) std::cout << "in L1TCaloLayer1.cc featureBits = " << featureBits << " from depth = " << fg << ", prompt = " << fg4 << ", and delayed1, delayed2 = " << fg5 << ", " << fg6 << " at ieta, iphi = " << caloEta << ", " << caloPhi << std::endl;
+	  }
+	  if (!layer1->setHCALData(t, featureBits, et)) {
+	    LOG_ERROR << "caloEta = " << caloEta << "; caloPhi =" << caloPhi << std::endl;
+	    LOG_ERROR << "UCT: Failed loading an HCAL tower" << std::endl;
+	    return;
           }
           expectedTotalET += et;
         } else {
