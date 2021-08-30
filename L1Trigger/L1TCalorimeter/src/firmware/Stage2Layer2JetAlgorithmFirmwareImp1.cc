@@ -103,7 +103,7 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
 
           int seedEt = tow.hwPt();
           int iDelay = (tow.hwQual() & 0b0100) >> 2;
-	  if ((iDelay > 0) && (abs(ieta) < 29)) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay from hwQual = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
+	  //	  if ((iDelay > 0) && (abs(ieta) < 29)) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay from hwQual = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
           int iEt = seedEt;
           bool satSeed = false;
           bool vetoCandidate = false;
@@ -139,7 +139,7 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
               const CaloTower& towTest = CaloTools::getTower(towers, CaloTools::caloEta(ietaTest), iphiTest);
               towEt = towTest.hwPt();
               towDelay = (towTest.hwQual() & 0b0100) >> 2;
-	      //	      if ((towDelay > 0) && (abs(ietaTest) < 29)) std::cout<< "in Stage2Layer2JetAlgorithmFirmwareImp towDelay from hwQual = " << towDelay << " at ieta, iphi = " << ietaTest << ", " << iphiTest << std::endl;
+	      if ((towDelay > 0) && (abs(ietaTest) < 29)) std::cout<< "in Stage2Layer2JetAlgorithmFirmwareImp towDelay from hwQual = " << towDelay << " at ieta, iphi = " << ietaTest << ", " << iphiTest << std::endl;
 
               if (mask_[8 - (dphi + 4)][deta + 4] == 0)
                 continue;
@@ -152,13 +152,13 @@ void l1t::Stage2Layer2JetAlgorithmFirmwareImp1::create(const std::vector<l1t::Ca
                 break;
               else {
                 iEt += towEt;
-                iDelay += towDelay;
+                if (abs(ieta) < 29 && abs(ietaTest) < 29) iDelay += towDelay; // don't include HF feature bits in HBHE flagged jets
 	      }
             }
             if (vetoCandidate)
               break;
           }
-	  //	  if (iDelay != 0) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
+	  if (iDelay != 0) std::cout << "in Stage2Layer2JetAlgorithmFirmwareImp iDelay = " << iDelay << " at ieta, iphi = " << ieta << ", " << iphi << std::endl;
 
           // add the jet to the list
           if (!vetoCandidate) {

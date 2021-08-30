@@ -208,11 +208,11 @@ void L1TCaloLayer1::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
         int caloPhi = hcalTp.id().iphi();
         int et = hcalTp.SOI_compressedEt();
         bool fg = hcalTp.t0().fineGrain(0);  // depth
-        bool fg2 = hcalTp.t0().fineGrain(1); // MIP
-        bool fg3 = hcalTp.t0().fineGrain(2); // MIP
-        bool fg4 = hcalTp.t0().fineGrain(3); // prompt
-        bool fg5 = hcalTp.t0().fineGrain(4); // delay 1
-        bool fg6 = hcalTp.t0().fineGrain(5); // delay 2
+        bool fg2 = hcalTp.t0().fineGrain(1); // prompt
+        bool fg3 = hcalTp.t0().fineGrain(2); // delay 1
+        bool fg4 = hcalTp.t0().fineGrain(3); // delay 2
+        bool fg5 = hcalTp.t0().fineGrain(4); // MIP
+        bool fg6 = hcalTp.t0().fineGrain(5); // MIP
 	if (caloPhi <= 72) {
           UCTTowerIndex t = UCTTowerIndex(caloEta, caloPhi);
           uint32_t featureBits = 0;
@@ -224,8 +224,8 @@ void L1TCaloLayer1::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 	      featureBits |= 0b10;
 	  }
 	  if (absCaloEta <= 29) {
-	    featureBits |= (fg | ((!fg4) & (fg5 | fg6))); // depth | (!prompt & (delay1 | delay2))
-	    //	    if ((fg == 1) | (fg4 == 1) | (fg5 == 1) | (fg6 == 1)) std::cout << "in L1TCaloLayer1.cc featureBits = " << featureBits << " from depth = " << fg << ", prompt = " << fg4 << ", and delayed1, delayed2 = " << fg5 << ", " << fg6 << " at ieta, iphi = " << caloEta << ", " << caloPhi << std::endl;
+	    featureBits |= (fg | ((!fg2) & (fg3 | fg4))); // depth | (!prompt & (delay1 | delay2))
+	    //	    if ((fg == 1) | (fg2 == 1) | (fg3 == 1) | (fg4 == 1)) std::cout << "in L1TCaloLayer1.cc featureBits = " << featureBits << " from depth = " << fg << ", prompt = " << fg2 << ", and delayed1, delayed2 = " << fg3 << ", " << fg4 << " at ieta, iphi = " << caloEta << ", " << caloPhi << std::endl;
 	  }
 	  if (!layer1->setHCALData(t, featureBits, et)) {
 	    LOG_ERROR << "caloEta = " << caloEta << "; caloPhi =" << caloPhi << std::endl;

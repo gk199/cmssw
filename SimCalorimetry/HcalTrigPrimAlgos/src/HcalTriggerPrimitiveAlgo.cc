@@ -499,8 +499,8 @@ void HcalTriggerPrimitiveAlgo::analyzeQIE11(IntegerCaloSamples& samples,
       output[ibin] = 0;
     }
     // peak-finding is not applied for FG bits
-    // compute(msb) returns two bits (MIP). compute(timingTDC,ids) returns 6 bits (1 depth, 2 reserved, 1 prompt, 1 delayed 01, 1 delayed 10)
-    finegrain[ibin] = fg_algo.compute(timingTDC[idx], ids[0]).to_ulong() | fg_algo.compute(msb[idx]).to_ulong() << 1;
+    // compute(msb) returns two bits (MIP). compute(timingTDC,ids) returns 6 bits (1 depth, 1 prompt, 1 delayed 01, 1 delayed 10, 2 reserved)
+    finegrain[ibin] = fg_algo.compute(timingTDC[idx], ids[0]).to_ulong() | fg_algo.compute(msb[idx]).to_ulong() << 4;
   }
   outcoder_->compress(output, finegrain, result);
 }

@@ -198,12 +198,12 @@ public:
       }
       if (cType == HBHE) {
 	int depth = fb & 0b1;
-	int prompt = (fb & 0b1000) >> 3;
-	int delay1 = (fb & 0b10000) >> 4;
-	int delay2 = (fb & 0b100000) >> 5;
-	data |= (depth | ((!prompt) & (delay1 | delay2))) << tower; // bit[0] | (!bit[3] & (bit[4] | bit[5])) 
-	if ((fb & 0b111001) != 0) {
-	  //	  std::cout << "in UCTCTP7RawData, depth = " << depth << "; MIP bits = " << ((fb & 0b110) >> 1) << "; prompt = " << prompt << "; delayed 1,2 = " << delay1 << ", " << delay2 << ". And data in setFB (Accounting for shift by tower) = " << ((data >> tower) & 0b1) << " with cType = " << cType << " at ieta, iphi = " << negativeEta * cEta << ", " << iPhi << std::endl;
+	int prompt = (fb & 0b10) >> 1;
+	int delay1 = (fb & 0b100) >> 2;
+	int delay2 = (fb & 0b1000) >> 3;
+	data |= (depth | ((!prompt) & (delay1 | delay2))) << tower; // bit[0] | (!bit[1] & (bit[2] | bit[3])) 
+	if ((fb & 0b001111) != 0) {
+	  //	  std::cout << "in UCTCTP7RawData, depth = " << depth << "; MIP bits = " << ((fb & 0b110000) >> 4) << "; prompt = " << prompt << "; delayed 1,2 = " << delay1 << ", " << delay2 << ". And data in setFB (Accounting for shift by tower) = " << ((data >> tower) & 0b1) << " with cType = " << cType << " at ieta, iphi = " << negativeEta * cEta << ", " << iPhi << std::endl;
 	}
       }
       else data |= (fb & 0x1) << tower;
