@@ -115,7 +115,7 @@ namespace l1t {
               ctp7Data.setET(cType, negativeEta, iEta, iPhi, tp->SOI_compressedEt());
 	      //              ctp7Data.setFB(cType, negativeEta, iEta, iPhi, tp->SOI_fineGrain());
               ctp7Data.setFB(cType, negativeEta, iEta, iPhi, fg_bits);
-	      //	      if ((fg_bits & 0b111001) != 0) std::cout << tp->SOI_fineGrain() << " = first bit, in CaloLayer1Packer, finegrain bits = " << fg_bits << std::endl;
+	      //	      if ((fg_bits & 0b001111) != 0) std::cout << tp->SOI_fineGrain() << " = first bit, in CaloLayer1Packer, finegrain bits = " << fg_bits << std::endl;
             }
           }
         }
