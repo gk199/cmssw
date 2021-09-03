@@ -89,24 +89,56 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
       DeepEnergy += 1;  // deep layers, 3+
   }
 
-  // very delayed (100000), slightly delayed (010000), prompt (001000), 2 reserved bits (000110), depth flag (000001)
+  // very delayed (001000), slightly delayed (000100), prompt (000010), depth flag (000001), and 2 reserved bits (110000)
   if (DeepEnergy > 0 && EarlyEnergy == 0)
     result[0] = true;  // 000001
   else
     result[0] = false;
   if (Nprompt > 0)
+    result[1] = true;  // 000010
+  else
+    result[1] = false;
+  if (Ndelayed > 0)
+    result[2] = true;  // 000100
+  else
+    result[2] = false;
+  if (NveryDelayed > 0)
     result[3] = true;  // 001000
   else
     result[3] = false;
-  if (Ndelayed > 0)
-    result[4] = true;  // 010000
-  else
-    result[4] = false;
-  if (NveryDelayed > 0)
-    result[5] = true;  // 100000
-  else
-    result[5] = false;
-  result[1] = result[2] = false;  // 000110 in HcalTriggerPrimitiveAlgo.cc, set to MIP bits from above
+  result[4] = result[5] = false;  // 110000 in HcalTriggerPrimitiveAlgo.cc, set to MIP bits from above
+
+  if (id.ieta() == 1 && id.iphi() == 1) {
+    result[0] = 1;
+    result[1] = result[2] = result[3] = 0;
+  } 
+  if (id.ieta() == 3 &&id.iphi() == 1) {
+    result[1] = 1;
+    result[0] = result[2] = result[3] = 0;
+  }
+  if (id.ieta() == 5 &&id.iphi() == 1) {
+    result[2] = 1;
+    result[1] = result[0] = result[3] = 0;
+  }
+  if (id.ieta() == 7 &&id.iphi() == 1) {
+    result[3] = 1;
+    result[1] = result[2] = result[0] = 0;
+  }
+  if (id.ieta() == 9 && id.iphi() == 1) {
+    result[1] = result[2] = 1;
+    result[3] = result[0] = 0;
+  }
+  if (id.ieta() == 11 && id.iphi() == 1) {
+    result[1] = result[3] = 1;
+    result[2] = result[0] = 0;
+  }
+  if (id.ieta() == 13 && id.iphi() == 1) {
+    result[1] = result[2] = result[3] = 1;
+    result[0] = 0;
+  }
+  if (id.ieta() == 15 && id.iphi() == 1) {
+    result [0] = result [1] = result [2] = result[3] = 1;
+  }
 
   return result;
 }
