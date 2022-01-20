@@ -92,7 +92,7 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
           1;  // deep layers, 3+. If bit13 = 1, energy in deep layers. Require ADC > 0 to ensure valid hit in cell
   }
 
-  // very delayed (100000), slightly delayed (010000), prompt (001000), 2 reserved bits (000110), depth flag (000001)
+  // very delayed (001000), slightly delayed (000100), prompt (000010), 2 reserved bits (110000), depth flag (000001)
   if (DeepEnergy > 0 && EarlyEnergy == 0)
     result[0] = true;  // 000001
   else
@@ -110,6 +110,38 @@ std::bitset<6> HcalFinegrainBit::compute(const HcalFinegrainBit::TowerTDC& tower
   else
     result[3] = false;
   result[4] = result[5] = false;  // 110000 in HcalTriggerPrimitiveAlgo.cc, set to MIP bits from above
+
+  if (id.ieta() == 1) {  // id.iphi() == 1) {
+    result[0] = true;
+    result[1] = result[2] = result[3] = false;
+  }
+  if (id.ieta() == 3) {  // id.iphi() == 1) {
+    result[1] = true;
+    result[0] = result[2] = result[3] = false;
+  }
+  if (id.ieta() == 5) {  // id.iphi() == 1) {
+    result[2] = true;
+    result[1] = result[0] = result[3] = false;
+  }
+  if (id.ieta() == 7) {  // id.iphi() == 1) {
+    result[3] = true;
+    result[1] = result[2] = result[0] = false;
+  }
+  if (id.ieta() == 9) {  // id.iphi() == 1) {
+    result[1] = result[2] = true;
+    result[3] = result[0] = false;
+  }
+  if (id.ieta() == 11) {  // id.iphi() == 1) {
+    result[1] = result[3] = true;
+    result[2] = result[0] = false;
+  }
+  if (id.ieta() == 13) {  // id.iphi() == 1) {
+    result[1] = result[2] = result[3] = true;
+    result[0] = false;
+  }
+  if (id.ieta() == 15) {  // id.iphi() == 1) {
+    result[0] = result[1] = result[2] = result[3] = true;
+  }
 
   return result;
 }

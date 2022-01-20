@@ -287,12 +287,12 @@ namespace l1t {
       int rank = 0;
       int hwEtaAtVtx = eta;
       int hwPhiAtVtx = phi;
-      double etaAtVtx = 0.0;
-      double phiAtVtx = 0.0;
-      int hwPtUnconstrained =
-          convertPtToHW(mcParticle.pt(), MaxLepPt_, PtStep_) / 2;  // word is 8 bits wide so divide 9 bit word by 2
-      double ptUnconstrained = 0.0;
-      int dXY = gRandom->Integer(4);  // should be [0,3] = 2 bits
+      double etaAtVtx = 0.0;  // added by R. Cavanaugh
+      double phiAtVtx = 0.0;  // added by R. Cavanaugh
+      int hwPtUnconstrained = convertPtToHW(mcParticle.pt(), MaxLepPt_, PtStep_) /
+                              2;      // added by R. Cavanaugh; word is 8 bits wide so divide 9 bit word by 2
+      double ptUnconstrained = 0.0;   // added by R. Cavanaugh
+      int dXY = gRandom->Integer(4);  // added by R. Cavanaugh; should be [0,3] = 2 bits
 
       // Eta outside of acceptance
       if (eta >= 9999)
@@ -322,7 +322,7 @@ namespace l1t {
                    phiAtVtx,
                    hwPtUnconstrained,
                    ptUnconstrained,
-                   dXY);  // modified to conform to latest Muon.h interface
+                   dXY);  // modified by R. Cavanaugh to conform to latest Muon.h interface
       muonVec.push_back(mu);
     }
 
@@ -343,7 +343,7 @@ namespace l1t {
       int pt = convertPtToHW(mcParticle.pt(), MaxLepPt_, PtStep_);
       int eta = convertEtaToHW(mcParticle.eta(), -MaxCaloEta_, MaxCaloEta_, EtaStepCalo_);
       int phi = convertPhiToHW(mcParticle.phi(), PhiStepCalo_);
-      int qual = 1;
+      int qual = gRandom->Integer(2);  // modified for LLP Jets
       int iso = gRandom->Integer(4) % 2;
 
       // Eta outside of acceptance
@@ -374,7 +374,7 @@ namespace l1t {
       int pt = convertPtToHW(mcParticle.pt(), MaxLepPt_, PtStep_);
       int eta = convertEtaToHW(mcParticle.eta(), -MaxCaloEta_, MaxCaloEta_, EtaStepCalo_);
       int phi = convertPhiToHW(mcParticle.phi(), PhiStepCalo_);
-      int qual = 1;
+      int qual = gRandom->Integer(2);  // modified for LLP Jets
       int iso = gRandom->Integer(4) % 2;
 
       // Eta outside of acceptance
@@ -427,7 +427,7 @@ namespace l1t {
         if (eta >= 9999)
           continue;
 
-        int qual = 0;
+        int qual = gRandom->Integer(2);  // modified for LLP Jets
 
         l1t::Jet jet(*p4, pt, eta, phi, qual);
         jetVec.push_back(jet);
@@ -442,7 +442,7 @@ namespace l1t {
           int EGeta = convertEtaToHW(genJet->eta(), -MaxCaloEta_, MaxCaloEta_, EtaStepCalo_);
           int EGphi = convertPhiToHW(genJet->phi(), PhiStepCalo_);
 
-          int EGqual = 1;
+          int EGqual = gRandom->Integer(2);  // modified for LLP Jets
           int EGiso = gRandom->Integer(4) % 2;
 
           l1t::EGamma eg(*p4, EGpt, EGeta, EGphi, EGqual, EGiso);
@@ -455,7 +455,7 @@ namespace l1t {
           int Taupt = convertPtToHW(genJet->et(), MaxLepPt_, PtStep_);
           int Taueta = convertEtaToHW(genJet->eta(), -MaxCaloEta_, MaxCaloEta_, EtaStepCalo_);
           int Tauphi = convertPhiToHW(genJet->phi(), PhiStepCalo_);
-          int Tauqual = 1;
+          int Tauqual = gRandom->Integer(2);  // modified for LLP Jets
           int Tauiso = gRandom->Integer(4) % 2;
 
           l1t::Tau tau(*p4, Taupt, Taueta, Tauphi, Tauqual, Tauiso);

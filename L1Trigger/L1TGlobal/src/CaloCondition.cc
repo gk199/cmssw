@@ -525,6 +525,28 @@ const bool l1t::CaloCondition::checkObjectParameter(const int iCondition,
     LogDebug("L1TGlobal") << "\t\t l1t::Candidate failed isolation requirement" << std::endl;
     return false;
   }
+
+  // check DISPLACED ( bit check ) with displaced LUT // Added for LLP Jets:  two-state LUT = {0,1}
+  // sanity check on candidate displaced
+  if (cand.hwQual() > 1) {
+    LogDebug("L1TGlobal") << "\t\t l1t::Candidate has out of range hwQual = " << cand.hwQual() << std::endl;
+    return false;
+  }
+  /*
+  bool hasDisplacedLUT  = objPar.displacedLUT & 1;                 // Does this algorithm have an LLP cut?
+  bool passDisplacedLUT = ( objPar.displacedLUT & cand.hwQual() ); // Did this algorithm pass the LLP cut?
+  if (hasDisplacedLUT && !passDisplacedLUT) {                      // Added for LLP Jets:
+  */
+  bool passDisplacedLUT = ((objPar.displacedLUT >> (cand.hwQual() & 1)) & 1);
+  if (!passDisplacedLUT) {  // Added for LLP Jets:
+    LogDebug("L1TGlobal") << "\t\t l1t::Candidate failed displaced requirement" << std::endl;
+    std::cout << "\t failed \t l1t::Candidate has hwQual = " << cand.hwQual()
+              << " ; and objPar.displacedLUT = " << objPar.displacedLUT << std::endl;
+    return false;
+  }
+  std::cout << "\t \t l1t::Candidate has hwQual = " << cand.hwQual()
+            << " ; and objPar.displacedLUT = " << objPar.displacedLUT << std::endl;
+
   //     if (!checkBit(objPar.phiRange, cand.hwPhi())) {
   //         return false;
   //     }
