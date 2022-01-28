@@ -266,10 +266,14 @@ void l1t::TriggerMenuParser::parseCondFormats(const L1TUtmTriggerMenu* utmMenu) 
         if (condition.getType() == esConditionType::SingleEgamma ||
             condition.getType() == esConditionType::DoubleEgamma ||
             condition.getType() == esConditionType::TripleEgamma ||
-            condition.getType() == esConditionType::QuadEgamma || condition.getType() == esConditionType::SingleTau ||
-            condition.getType() == esConditionType::DoubleTau || condition.getType() == esConditionType::TripleTau ||
-            condition.getType() == esConditionType::QuadTau || condition.getType() == esConditionType::SingleJet ||
-            condition.getType() == esConditionType::DoubleJet || condition.getType() == esConditionType::TripleJet ||
+            condition.getType() == esConditionType::QuadEgamma || 
+	    condition.getType() == esConditionType::SingleTau ||
+            condition.getType() == esConditionType::DoubleTau || 
+	    condition.getType() == esConditionType::TripleTau ||
+            condition.getType() == esConditionType::QuadTau || 
+	    condition.getType() == esConditionType::SingleJet ||
+            condition.getType() == esConditionType::DoubleJet || 
+	    condition.getType() == esConditionType::TripleJet ||
             condition.getType() == esConditionType::QuadJet) {
           parseCalo(condition, chipNr, false);
 
@@ -1764,6 +1768,9 @@ bool l1t::TriggerMenuParser::parseCalo(tmeventsetup::esCondition condCalo, unsig
     unsigned int phiWindow1Lower = -1, phiWindow1Upper = -1, phiWindow2Lower = -1, phiWindow2Upper = -1;
     int isolationLUT = 0xF;  //default is to ignore isolation unless specified.
     int qualityLUT = 0xF;    //default is to ignore quality unless specified.
+    int displacedLUT = 0x0;  // Added for LLP Jets:  single bit LUT:  { 0 = noLLP default, 1 = LLP }
+                             // Note:  Currently assume that the hwQual() getter in L1Candidate provides the 
+                             //        (single bit) information for the displacedLUT
 
     const std::vector<esCut>& cuts = object.getCuts();
     for (size_t kk = 0; kk < cuts.size(); kk++) {
@@ -1819,6 +1826,10 @@ bool l1t::TriggerMenuParser::parseCalo(tmeventsetup::esCondition condCalo, unsig
           qualityLUT = l1tstr2int(cut.getData());
 
         } break;
+	case esCutType::Displaced: { // Added for LLP Jets
+          displacedLUT = l1tstr2int(cut.getData());
+
+	  } break;
         case esCutType::Isolation: {
           isolationLUT = l1tstr2int(cut.getData());
 
@@ -1844,6 +1855,7 @@ bool l1t::TriggerMenuParser::parseCalo(tmeventsetup::esCondition condCalo, unsig
     objParameter[cnt].phiWindow2Upper = phiWindow2Upper;
     objParameter[cnt].isolationLUT = isolationLUT;
     objParameter[cnt].qualityLUT = qualityLUT;  //TO DO: Must add
+    objParameter[cnt].displacedLUT = displacedLUT;  // Added for LLP Jets
 
     // Output for debugging
     LogDebug("TriggerMenuParser") << "\n      Calo ET high thresholds (hex) for calo object " << caloObjType << " "
@@ -1990,6 +2002,9 @@ bool l1t::TriggerMenuParser::parseCaloCorr(const tmeventsetup::esObject* corrCal
   unsigned int phiWindow1Lower = -1, phiWindow1Upper = -1, phiWindow2Lower = -1, phiWindow2Upper = -1;
   int isolationLUT = 0xF;  //default is to ignore isolation unless specified.
   int qualityLUT = 0xF;    //default is to ignore quality unless specified.
+  int displacedLUT = 0x0;  // Added for LLP Jets:  single bit LUT:  { 0 = noLLP default, 1 = LLP }
+                           // Note:  Currently assume that the hwQual() getter in L1Candidate provides the 
+                           //        (single bit) information for the displacedLUT
 
   const std::vector<esCut>& cuts = corrCalo->getCuts();
   for (size_t kk = 0; kk < cuts.size(); kk++) {
@@ -2045,6 +2060,10 @@ bool l1t::TriggerMenuParser::parseCaloCorr(const tmeventsetup::esObject* corrCal
         qualityLUT = l1tstr2int(cut.getData());
 
       } break;
+      case esCutType::Displaced: { // Added for LLP Jets
+	displacedLUT = l1tstr2int(cut.getData());
+	
+	} break;
       case esCutType::Isolation: {
         isolationLUT = l1tstr2int(cut.getData());
 
@@ -2070,6 +2089,7 @@ bool l1t::TriggerMenuParser::parseCaloCorr(const tmeventsetup::esObject* corrCal
   objParameter[0].phiWindow2Upper = phiWindow2Upper;
   objParameter[0].isolationLUT = isolationLUT;
   objParameter[0].qualityLUT = qualityLUT;  //TO DO: Must add
+  objParameter[0].displacedLUT = displacedLUT;  // Added for LLP Jets
 
   // Output for debugging
   LogDebug("TriggerMenuParser") << "\n      Calo ET high threshold (hex) for calo object " << caloObjType << " "

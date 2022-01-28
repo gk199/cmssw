@@ -62,6 +62,7 @@ public:
 
     unsigned int isolationLUT;
     unsigned int qualityLUT;
+    unsigned int displacedLUT; // Added for LLP Jets
 
     unsigned int etaWindow1Lower;
     unsigned int etaWindow1Upper;

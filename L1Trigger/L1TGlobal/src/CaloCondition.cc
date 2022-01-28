@@ -525,6 +525,24 @@ const bool l1t::CaloCondition::checkObjectParameter(const int iCondition,
     LogDebug("L1TGlobal") << "\t\t l1t::Candidate failed isolation requirement" << std::endl;
     return false;
   }
+
+  // sanity check LLP DISP ( bit check ) with two-state LUT = {0,1}
+  // note that this check is only valid when hwQual contains just the single LLP DISP bit.  
+  //      if hwQual is later defined to contain more quality bits, then below chek will have to be changed.
+  if (cand.hwQual() > 1) {
+    LogDebug("L1TGlobal") << "\t\t l1t::Candidate has out of range hwQual = " << cand.hwQual() << std::endl;
+    return false;
+  }
+  
+  bool hasDisplacedLUT  = objPar.displacedLUT & 1;                 // Does this algorithm have an LLP cut defined for the algo?
+  bool passDisplacedLUT = ( objPar.displacedLUT & cand.hwQual() ); // Did this candidate pass the LLP cut?
+  if (hasDisplacedLUT && !passDisplacedLUT) {                      // Require inclusive trigger: if cut not part of algo, ignore.
+    LogDebug("L1TGlobal") << "\t\t l1t::Candidate failed displaced requirement" << std::endl;
+    std::cout << "failed \t l1t::Candidate has hwQual = " << cand.hwQual() <<" ; and objPar.displacedLUT = "<< objPar.displacedLUT << std::endl;
+    return false;
+  }
+  std::cout << "\t \t l1t::Candidate has hwQual = " << cand.hwQual() << " ; and objPar.displacedLUT = " << objPar.displacedLUT << std::endl;
+
   //     if (!checkBit(objPar.phiRange, cand.hwPhi())) {
   //         return false;
   //     }
