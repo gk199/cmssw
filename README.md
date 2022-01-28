@@ -136,8 +136,8 @@ And then run this file with `cmsRun runGlobalFakeInputProducer.py`, and this wil
                        Algorithm Name                              Init     aBXM     Final
 =============================================================================================
 L1_AlwaysTrue							    10        10        10
-L1_SingleJet35_llp				 	   	    2         2         2
-L1_SingleJet35                                                      0         0         0
+L1_SingleJet35                                                      2         2		2
+L1_SingleJet35_llp				 	   	    1         1         1
 ```
 
 When the uGT emulator is added to the area that already has the L1 emulator, both printouts will show when the DIGI step of MC is run. But remember that the DIGI step sets jet hwQual values, and these are used in the uGT emulator, which relies on the produced DIGI file.
