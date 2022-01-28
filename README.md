@@ -25,8 +25,11 @@ SimCalorimetry/HcalTrigPrimAlgos/src/HcalFinegrainBit.cc
 SimCalorimetry/HcalTrigPrimAlgos/src/HcalTriggerPrimitiveAlgo.cc
 ```
 From the following commits (all are prior to 12_3_0 so are included in the recent CMSSW branches):
+
 [CMSSW PR#35599](https://github.com/cms-sw/cmssw/pull/35599): uHTR group 0 LUT bits12-15 for fine grain bits, fix fine grain bit assignment order
+
 [CMSSW PR#34600](https://github.com/cms-sw/cmssw/pull/34600): Fine grain bits for timing and depth
+
 [CMSSW PR#33050](https://github.com/cms-sw/cmssw/pull/33050): HB TDC packing and prompt - delayed boundaries
 
 ## Running
@@ -141,10 +144,3 @@ When the uGT emulator is added to the area that already has the L1 emulator, bot
 
 ## Questions 
 Currently, sending in different DIGI files (ie one produced with fake fine grain bits on all iphi (ieta = 1,3,5,7,9,11,13,15) gives the same `test-vector-log.txt` as using a file produced with fake fine grain bits only on iphi=1). Is the `runGlobalFakeInputProducer` not using the DIGI hwQual data to make the output, ie is this result expected?
-
-In CaloConditions.cc, a displacedLUT is used along with jet hwQual to set `passDisplacedLUT` (line 540). The logic is:
-*If jet hwQual is 0, passDisplacedLUT is simply displacedLUT
-*If jet hwQual is 1, passDisplacedLUT is always 0
-However, this seems to be a non LLP jet. 
-
-Why is there a mismatch between L1_SingleJet35_llp and L1_SingleJet35? Should L1_SingleJet35_llp be a subset of L1_SingleJet35? 
