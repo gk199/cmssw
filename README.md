@@ -142,5 +142,9 @@ L1_SingleJet35_llp				 	   	    1         1         1
 
 When the uGT emulator is added to the area that already has the L1 emulator, both printouts will show when the DIGI step of MC is run. But remember that the DIGI step sets jet hwQual values, and these are used in the uGT emulator, which relies on the produced DIGI file.
 
-## Questions 
-Currently, sending in different DIGI files (ie one produced with fake fine grain bits on all iphi (ieta = 1,3,5,7,9,11,13,15) gives the same `test-vector-log.txt` as using a file produced with fake fine grain bits only on iphi=1). Is the `runGlobalFakeInputProducer` not using the DIGI hwQual data to make the output, ie is this result expected?
+## Notes on cmsRun python config
+With `cmsRun runGlobalFakeInputProducer.py`, the fake input to the uGT from `plugin/GenToInputProducer.cc` is used. This produces non-trivial inputs to uGT emulator for testing of firmware. Thus, sending in different DIGI files (ie one produced with fake fine grain bits on all iphi (ieta = 1,3,5,7,9,11,13,15) gives the same `test-vector-log.txt` as using a file produced with fake fine grain bits only on iphi=1). The `runGlobalFakeInputProducer` is not using the DIGI hwQual data to make the output.
+
+Use `L1Trigger/L1TGlobal/test/l1tGlobalEmulation_FromDigi.py` to run on existing DIGIs. This is the config that runs emulation from existing digis. 
+
+Helpful uGT emulation [twiki](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideL1TGlobal).
