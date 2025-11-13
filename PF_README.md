@@ -27,6 +27,8 @@ echo "PF_README.md" >> .git/info/sparse-checkout
 This lets the .md file be committed. 
 
 # PF Configuration for data or MC
+The full details and code for this setup are [here](https://github.com/gk199/PF-Reco-Analysis).
+
 This is designed to re-run reconstruction on data or MC, from RAW samples, such that the full PF workflow is done. The PF clusters (HCAL and ECAL), blocks, and candidates are saved, along with HBHE rechits from raw. Multiple python configs are available, enabling the final file to either contain RECO, AOD, or AOD + trigger results.
 ```
 cmsRun MyPFStudy_ReReco_RAW2DIGI_L1Reco_RECO.py
@@ -113,7 +115,7 @@ eventSelection = cms.string("nocut"),
 ```
 
 # Factorizing PF
-
+Work in progress...
 
 # Local Areas (Gillian)
 MC production and data processing:
