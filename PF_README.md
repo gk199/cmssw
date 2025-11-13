@@ -27,11 +27,15 @@ echo "PF_README.md" >> .git/info/sparse-checkout
 This lets the .md file be committed. 
 
 # PF Configuration for data or MC
+This is designed to re-run reconstruction on data or MC, from RAW samples, such that the full PF workflow is done. The PF clusters (HCAL and ECAL), blocks, and candidates are saved, along with HBHE rechits from raw. Multiple python configs are available, enabling the final file to either contain RECO, AOD, or AOD + trigger results.
 ```
+cmsRun MyPFStudy_ReReco_RAW2DIGI_L1Reco_RECO.py
 cmsRun MyPFStudy_ReRecoAOD_RAW2DIGI_L1Reco_RECO.py
+cmsRun MyPFStudy_ReRecoAODfull_RAW2DIGI_L1Reco_RECO.py
+
 edmDumpEventContent pf_only_reRecoAOD.root | grep particleFlow
 ```
-For producing ntuples:
+For producing ntuples for plotting and further analysis:
 ```
 cmsRun MyAnalyzer/PFObjectsNtupler/python/runPFObjectsNtupler_cfg.py
 ```
@@ -87,7 +91,7 @@ cmsDriver.py step2 \
 ```
 
 # Monitoring and Plotting (DQMOffline)
-Within CMSSW (using `CMSSW_15_0_6` currently), checkout the github branch `pfclusters` from [here](https://github.com/jroloff/cmssw/tree/pfclusters/DQMOffline/ParticleFlow) into DQMOffline/ParticleFlow. Make a `.log` file listing the ROOT files to analyze, and list this in `runBasic_cfg.py`. From within the CMSSW area, run:
+Within CMSSW (using `CMSSW_15_0_6` currently), checkout the github branch `pfclusters` from [here](https://github.com/jroloff/cmssw/tree/pfclusters/DQMOffline/ParticleFlow) into DQMOffline/ParticleFlow. Make a `.log` file listing the ROOT files to analyze, and list this in `runBasic_cfg.py`. RECO files from MC can be used, or AODfull files from re-reco of data. AODfull files have trigger information included. From within the CMSSW area, run:
 ```
 cmsenv
 scram b -j 8
@@ -124,3 +128,7 @@ PF plots:
 ```
 /afs/cern.ch/work/g/gkopp/2025_ParticleFlow/pfmonitoringplots
 ```
+
+Github: `git push PF_Project PFdevelopment`.
+
+[Link](https://github.com/gk199/cmssw/blob/PFdevelopment/PF_README.md) to github documentation.
