@@ -7,11 +7,11 @@ PFAnalyzer = DQMEDAnalyzer("PFAnalyzer",
     PVCollection             = cms.InputTag("offlinePrimaryVertices"),
 
     TriggerResultsLabel        = cms.InputTag("TriggerResults::HLT"),
-    TriggerNames = cms.vstring("HLT_PFJet450"),
-    #TriggerNames = cms.vstring(""),
+    # TriggerNames = cms.vstring("HLT_PFJet450"),
+    TriggerNames = cms.vstring(""),
     srcWeights = cms.InputTag("puppi"),
-    #eventSelection = cms.string("nocut"),
-    eventSelection = cms.string("dijet"),
+    eventSelection = cms.string("nocut"),
+    #eventSelection = cms.string("dijet"),
 
 
 

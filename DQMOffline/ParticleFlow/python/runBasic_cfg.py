@@ -19,7 +19,12 @@ process.load("DQMServices.Components.DQMEnvironment_cfi")
 process.load('DQMOffline.ParticleFlow.runBasic_cfi')
 
 
-with open('fileList.log') as f:
+# with open('fileList_2025CJetMET_10files.log') as f:
+# with open('fileList_Winter24_QCDmultijet_T2MIT.log') as f:
+# with open('fileList_Winter24_SinglePionGun_T2NCHC.log') as f:
+# with open('fileList_Winter24_SinglePionGun_NoPU2to10_T2NCHC.log') as f:
+with open('fileList_ChargedPionPt10.log') as f:
+# with open('fileList_reRecoAOD.log') as f:
     lines = f.readlines()
 #Input source
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(lines))

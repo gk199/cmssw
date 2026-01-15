@@ -1,6 +1,9 @@
 # Particle Flow 
 
+Documentation for running MC, using the DQM offline for monitoring and plotting, making re-reco and ntuples for testing PF, and factorizing particle flow.
+
 # Full Setup
+Set up a recent CMSSW release, and get Jennifer's DQM plotting framework:
 ```
 cmsrel CMSSW_15_0_6
 cd CMSSW_15_0_6/src
@@ -26,24 +29,30 @@ echo "PF_README.md" >> .git/info/sparse-checkout
 ```
 This lets the .md file be committed. 
 
-# PF Configuration for data or MC
-The full details and code for this setup are [here](https://github.com/gk199/PF-Reco-Analysis).
-
-This is designed to re-run reconstruction on data or MC, from RAW samples, such that the full PF workflow is done. The PF clusters (HCAL and ECAL), blocks, and candidates are saved, along with HBHE rechits from raw. Multiple python configs are available, enabling the final file to either contain RECO, AOD, or AOD + trigger results.
-```
-cmsRun MyPFStudy_ReReco_RAW2DIGI_L1Reco_RECO.py
-cmsRun MyPFStudy_ReRecoAOD_RAW2DIGI_L1Reco_RECO.py
-cmsRun MyPFStudy_ReRecoAODfull_RAW2DIGI_L1Reco_RECO.py
-
-edmDumpEventContent pf_only_reRecoAOD.root | grep particleFlow
-```
-For producing ntuples for plotting and further analysis:
-```
-cmsRun MyAnalyzer/PFObjectsNtupler/python/runPFObjectsNtupler_cfg.py
-```
-
 ## To list files from DAS
 ```dasgoclient -query="file dataset=/QCD_Pt-15to7000_TuneCP5_Flat_13p6TeV_pythia8/Run3Winter24Reco-NoPU_133X_mcRun3_2024_realistic_v9-v2/AODSIM site=T2_US_MIT"```
+
+# Monitoring and Plotting (DQMOffline)
+Within CMSSW (using `CMSSW_15_0_6` currently), checkout the github branch `pfclusters` from [here](https://github.com/jroloff/cmssw/tree/pfclusters/DQMOffline/ParticleFlow) into DQMOffline/ParticleFlow. Make a `.log` file listing the ROOT files to analyze, and list this in `runBasic_cfg.py`. RECO files from MC can be used, or AODfull files from re-reco of data. AODfull files have trigger information included. From within the CMSSW area, run:
+```
+cmsenv
+scram b -j 8
+voms-proxy-init --rfc --voms cms --valid 48:00
+cd DQMOffline/ParticleFlow/python
+cmsRun runBasic_cfg.py
+cmsRun runBasic_step2_cfg.py
+```
+The first step produces an output file `OUT_step1.root` that is used in the second step. Then use the PF plotting code from [here](https://gitlab.cern.ch/jroloff/pfmonitoringplots). This can be outside a CMSSW area. `sampleList.txt` lists the run number and the sample it came from. For example, `392251 2025*Era*C*JetMET` is from the ROOT file with run 392251 and 2025 Era C JetMET will be the legend label. Edit file name in `PlotDistributions.py`, and run:
+```
+python3 PlotDistributions.py --samples sampleList.txt --outDir Plots --varList varList_initial.txt --eventVarList eventVarList.txt
+```
+Note that the run number listed in eventVarList must correspond to the filename and run number in the ROOT tree. 
+
+Note that for MC or the re-reco samples, the trigger and event selection might be too restrictive. To remove the trigger and event selection requirements, edit `runBasic_cfi.py`:
+```
+TriggerNames = cms.vstring(""),
+eventSelection = cms.string("nocut"),
+```
 
 # MC Generation
 For MC production of a single pion sample, `git-cms-addpkg Configuration/Generator` directory for reference. Start with the 10 GeV single pion from here, and then change the produced .py file for different energies, charged vs neutral, etc.
@@ -92,26 +101,34 @@ cmsDriver.py step2 \
    --mc -n 100 \
 ```
 
-# Monitoring and Plotting (DQMOffline)
-Within CMSSW (using `CMSSW_15_0_6` currently), checkout the github branch `pfclusters` from [here](https://github.com/jroloff/cmssw/tree/pfclusters/DQMOffline/ParticleFlow) into DQMOffline/ParticleFlow. Make a `.log` file listing the ROOT files to analyze, and list this in `runBasic_cfg.py`. RECO files from MC can be used, or AODfull files from re-reco of data. AODfull files have trigger information included. From within the CMSSW area, run:
+If the g4SimHits are needed, save the full event content:
 ```
-cmsenv
-scram b -j 8
-voms-proxy-init --rfc --voms cms --valid 48:00
-cd DQMOffline/ParticleFlow/python
-cmsRun runBasic_cfg.py
-cmsRun runBasic_step2_cfg.py
+cmsDriver.py step2test \
+   --python_filename SinglePiPt10_FEVTDEBUGHLT_cfg.py \
+   --filein file:SinglePiPt10_step1_GEN-SIM-RAW.root  \
+   --fileout file:SinglePiPt10_step2_FEVTDEBUGHLT.root   \
+   --customise Configuration/DataProcessing/Utils.addMonitoring    \
+   --eventcontent FEVTDEBUGHLT    --datatier GEN-SIM-RECO    \
+   --conditions auto:phase1_2024_realistic    \
+   --step RAW2DIGI,L1Reco,RECO,RECOSIM,HLT:@relval2024  \  
+   --geometry DB:Extended    --era Run3_2024    \
+   --mc -n 10
 ```
-The first step produces an output file `OUT_step1.root` that is used in the second step. Then use the PF plotting code from [here](https://gitlab.cern.ch/jroloff/pfmonitoringplots). This can be outside a CMSSW area. `sampleList.txt` lists the run number and the sample it came from. For example, `392251 2025*Era*C*JetMET` is from the ROOT file with run 392251 and 2025 Era C JetMET will be the legend label. Edit file name in `PlotDistributions.py`, and run:
-```
-python3 PlotDistributions.py --samples sampleList.txt --outDir Plots --varList varList_initial.txt --eventVarList eventVarList.txt
-```
-Note that the run number listed in eventVarList must correspond to the filename and run number in the ROOT tree. 
 
-Note that for MC or the re-reco samples, the trigger and event selection might be too restrictive. To remove the trigger and event selection requirements, edit `runBasic_cfi.py`:
+# PF Configuration for data or MC
+The full details and code for this setup are [here](https://github.com/gk199/PF-Reco-Analysis).
+
+This is designed to re-run reconstruction on data or MC, from RAW samples, such that the full PF workflow is done. The PF clusters (HCAL and ECAL), blocks, and candidates are saved, along with HBHE rechits from raw. Multiple python configs are available, enabling the final file to either contain RECO, AOD, or AOD + trigger results.
 ```
-TriggerNames = cms.vstring(""),
-eventSelection = cms.string("nocut"),
+cmsRun MyPFStudy_ReReco_RAW2DIGI_L1Reco_RECO.py
+cmsRun MyPFStudy_ReRecoAOD_RAW2DIGI_L1Reco_RECO.py
+cmsRun MyPFStudy_ReRecoAODfull_RAW2DIGI_L1Reco_RECO.py
+
+edmDumpEventContent pf_only_reRecoAOD.root | grep particleFlow
+```
+For producing ntuples for plotting and further analysis:
+```
+cmsRun MyAnalyzer/PFObjectsNtupler/python/runPFObjectsNtupler_cfg.py
 ```
 
 # Factorizing PF
