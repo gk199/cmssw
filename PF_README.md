@@ -56,6 +56,8 @@ eventSelection = cms.string("nocut"),
 
 # MC Generation
 For MC production of a single pion sample, `git-cms-addpkg Configuration/Generator` directory for reference. Start with the 10 GeV single pion from here, and then change the produced .py file for different energies, charged vs neutral, etc.
+
+MC generations commands can be cross checked with the standard RunTheMatrix, such as `runTheMatrix.py -l 13034`. 
 ```
 cmsDriver.py Configuration/Generator/python/SinglePiPt10_pythia8_cfi.py \
    --fileout file:SinglePionPt10_step0_GEN-SIM.root \
@@ -65,7 +67,7 @@ cmsDriver.py Configuration/Generator/python/SinglePiPt10_pythia8_cfi.py \
    --conditions auto:phase1_2024_realistic \
    --beamspot Realistic25ns13p6TeVEarly2022Collision \
    --step GEN,SIM --geometry DB:Extended \
-   --era Run3 --python_filename SinglePiPt10_cfg.py \
+   --era Run3_2024 --python_filename SinglePiPt10_cfg.py \
    -n 100 \
    --no_exec
 
@@ -86,7 +88,15 @@ cmsDriver.py step1 \
    --geometry DB:Extended \
    --era Run3_2024 \
    --mc -n 100
+```
+Recommendations to add pileup:
+```
+--pileup Run3_Flat55To75_PoissonOOTPU 
+--pileup_input das:/RelValMinBias_14TeV/CMSSW_14_1_0_pre7-140X_mcRun3_2024_realistic_v21_STD_RegeneratedGS_2024_noPU-v1/GEN-SIM
+```
+instead of `--pileup NoPileUp`. This is from the RunTheMatrix ttbar 2024 sample with 2024 PU conditions. 
 
+```
 cmsDriver.py step2 \
    --python_filename SinglePiPt10_RECO_cfg.py \
    --filein file:SinglePiPt10_step1_GEN-SIM-RAW.root \
